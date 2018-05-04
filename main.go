@@ -4,6 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"fmt"
+	"github.com/batazor/go-logger/api/amqp"
 )
 
 var (
@@ -19,11 +20,15 @@ func init() {
 }
 
 func main() {
+	go amqp.Listen()
+
 	http.HandleFunc("/hello", Hello)
 	err := http.ListenAndServe(":8080", nil) // set listen port
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+
+	log.Info("Listen HTTP 8080")
 }
 
 func Hello(w http.ResponseWriter, r *http.Request) {
