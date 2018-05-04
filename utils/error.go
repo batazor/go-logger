@@ -8,6 +8,6 @@ var (
 
 func FailOnError(err error, msg string) {
 	if err != nil {
-		log.Error(msg, err)
+		log.Warn(msg, err)
 	}
 }
