@@ -9,6 +9,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/streadway/amqp"
+  packages = ["."]
+  revision = "8e4aba63da9fc5571e01c6a45dc809a58cbc5a68"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   revision = "1f94bef427e370e425e55b172f3b5e300ef38304"
@@ -25,6 +31,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "741af51daa02225074947afa64e0338f549e2584d55a6df34f5b9738a79503ac"
+  inputs-digest = "f3c032dcc11b9ea8a008d4e307bceea49bf84e4b5ed175c531f9b5eed84ac80a"
   solver-name = "gps-cdcl"
   solver-version = 1
