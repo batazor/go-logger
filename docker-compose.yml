@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+
+  influxdb:
+    image: influxdb:alpine
+    container_name: influxdb
+    ports:
+    - "8083:8083"
+    - "8086:8086"
+    - "8090:8090"
+    env_file:
+    - 'ops/conf/env.influxdb'
+    volumes:
+    - /data/influxdb/data:/var/lib/influxdb
+
+  chronograf:
+    image: chronograf:alpine
+    volumes:
+    - /data/chronograf:/var/lib/chronograf
+    ports:
+    - "8888:8888"
+    links:
+    - influxdb

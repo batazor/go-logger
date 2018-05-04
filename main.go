@@ -1,14 +1,17 @@
 package main
 
 import (
+	"fmt"
+	"github.com/batazor/go-logger/modules/amqp"
+	"github.com/batazor/go-logger/modules/influxdb"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"fmt"
-	"github.com/batazor/go-logger/api/amqp"
 )
 
 var (
 	log = logrus.New()
+
+	packetCh = make(chan []byte)
 )
 
 func init() {
@@ -20,7 +23,8 @@ func init() {
 }
 
 func main() {
-	go amqp.Listen()
+	go influxdb.Connect(packetCh)
+	go amqp.Listen(packetCh)
 
 	http.HandleFunc("/hello", Hello)
 	err := http.ListenAndServe(":8080", nil) // set listen port

@@ -26,6 +26,12 @@ var (
 )
 
 func init() {
+	// Logging =================================================================
+	// Setup the logger backend using Sirupsen/logrus and configure
+	// it to use a custom JSONFormatter. See the logrus docs for how to
+	// configure the backend at github.com/Sirupsen/logrus
+	log.Formatter = new(logrus.JSONFormatter)
+
 	// Gracefully stop application
 	signal.Notify(gracefulStop, syscall.SIGTERM)
 
@@ -42,20 +48,20 @@ func init() {
 						"",
 						nil,
 					)
-					failOnError(err, "Failed to unbind a queue")
+					utils.FailOnError(err, "Failed to unbind a queue")
 				}
 			}
 		}
 	}()
 }
 
-func Listen() {
+func Listen(packetCh chan []byte) {
 	AMQP_CONN, err := amqp.Dial(AMQP_API)
-	failOnError(err, "Failed to connect to RabbitMQ")
+	utils.FailOnError(err, "Failed to connect to RabbitMQ")
 	defer AMQP_CONN.Close()
 
 	AMQP_CH, err := AMQP_CONN.Channel()
-	failOnError(err, "Failed to open a channel")
+	utils.FailOnError(err, "Failed to open a channel")
 	defer AMQP_CH.Close()
 
 	AMQP_Q, err := AMQP_CH.QueueDeclare(
@@ -66,7 +72,7 @@ func Listen() {
 		false,
 		nil,
 	)
-	failOnError(err, "Failed to declare a queue")
+	utils.FailOnError(err, "Failed to declare a queue")
 
 	exchangeList := strings.Split(AMQP_EXCHANGE_LIST, ",")
 	for _, echangeName := range exchangeList {
@@ -78,7 +84,7 @@ func Listen() {
 			false,
 			nil,
 		)
-		failOnError(err, "Failed to bind a queue")
+		utils.FailOnError(err, "Failed to bind a queue")
 	}
 
 	msgs, err := AMQP_CH.Consume(
@@ -90,11 +96,11 @@ func Listen() {
 		false,
 		nil,
 	)
-	failOnError(err, "Failed to register a consumer")
+	utils.FailOnError(err, "Failed to register a consumer")
 
 	go func() {
 		for d := range msgs {
-			log.Info("Received a message: ", string(d.Body))
+			packetCh <- d.Body
 		}
 	}()
 

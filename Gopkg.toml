@@ -36,3 +36,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/streadway/amqp"
+
+[[constraint]]
+  name = "github.com/influxdata/influxdb"
+  version = "1.5.2"

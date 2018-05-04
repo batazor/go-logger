@@ -2,6 +2,16 @@
 
 
 [[projects]]
+  name = "github.com/influxdata/influxdb"
+  packages = [
+    "client/v2",
+    "models",
+    "pkg/escape"
+  ]
+  revision = "02d7d4f043b34ecb4e9b2dbec298c6f9450c2a32"
+  version = "v1.5.2"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
@@ -31,6 +41,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f3c032dcc11b9ea8a008d4e307bceea49bf84e4b5ed175c531f9b5eed84ac80a"
+  inputs-digest = "a3ebcef5e42afa5cb8a698f5248f5e09f95357504080a855baa70bf3b0353e1a"
   solver-name = "gps-cdcl"
   solver-version = 1
