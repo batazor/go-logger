@@ -1,0 +1,8 @@
+name: go-logger
+description: Save telemtery to TSDB
+version: 0.1.0
+keywords:
+- tsdb
+- logger
+home: https://batazor.github.io/go-logger/
+engine: gotpl

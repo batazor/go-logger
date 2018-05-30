@@ -1,0 +1,72 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "logger.fullname" . }}
+  labels:
+    app: {{ template "logger.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    pipeline_id: "{{ .Values.CI_PIPELINE_ID }}"
+    build_id: "{{ .Values.CI_BUILD_ID }}"
+    commit_sha: "{{ .Values.CI_COMMIT_SHA }}"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: {{ template "logger.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "logger.name" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        pipeline_id: "{{ .Values.CI_PIPELINE_ID }}"
+        build_id: "{{ .Values.CI_BUILD_ID }}"
+        commit_sha: "{{ .Values.CI_COMMIT_SHA }}"
+      annotations:
+      {{- range $key, $value := .Values.deployment.annotations }}
+        {{ $key }}: {{ $value }}
+      {{- end }}
+    spec:
+      {{- if .Values.deployment.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.deployment.nodeSelector | indent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
+      {{- with .Values.deployment.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.deployment.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+      {{- if .Values.deployment.image.pullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.deployment.image.pullSecrets }}
+        - name: {{ . }}
+      {{- end}}
+      {{- end }}
+      containers:
+      - name: logger
+        image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
+        imagePullPolicy: {{ .Values.deployment.image.pullPolicy | quote }}
+        # command:
+        # args:
+        env:
+{{- range $key, $value := .Values.deployment.env }}
+        - name: {{ $key }}
+          value: {{ $value | quote }}
+{{- end }}
+        ports:
+        - name: api
+          containerPort: 8080
+        resources:
+{{ toYaml .Values.deployment.resources | indent 10 }}

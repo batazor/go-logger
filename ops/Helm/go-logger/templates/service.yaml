@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "logger.fullname" . }}
+  labels:
+    app: {{ template "logger.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    pipeline_id: "{{ .Values.CI_PIPELINE_ID }}"
+    build_id: "{{ .Values.CI_BUILD_ID }}"
+    commit_sha: "{{ .Values.CI_COMMIT_SHA }}"
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - name: api
+    port: 8080
+    targetPort: api
+    nodePort: {{ .Values.service.nodePort }}
+  selector:
+    app: {{ template "logger.name" . }}
