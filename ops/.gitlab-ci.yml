@@ -106,8 +106,6 @@ build:staging:
   script:
   - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG .
   - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
-  tags:
-  - docker
   only:
   - /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)-rc(?:0|[1-9]\d*)$/
 
