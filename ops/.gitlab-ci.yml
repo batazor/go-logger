@@ -64,7 +64,7 @@ before_script:
 - ln -s /go/src/$GITHUB_PATH/$CI_PROJECT_NAME /go/src/_/builds/$CI_PROJECT_NAME
 
 stages:
-- best_practices
+# - best_practices
 - build
 - publish
 - deploy
