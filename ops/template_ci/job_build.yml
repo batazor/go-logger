@@ -1,0 +1,9 @@
+.job_template_build: &job_build
+  type: build
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  except:
+  - branches
+  when: on_success
