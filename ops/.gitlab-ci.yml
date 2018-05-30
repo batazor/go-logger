@@ -1,11 +1,11 @@
-.best_practices: &job_best_practices
-  type: best_practices
-  image: golang:1.9.2-alpine
-  before_script:
-  - apk add --no-cache git
-  only:
-  - /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)-rc(?:0|[1-9]\d*)$/
-  allow_failure: true
+# .best_practices: &job_best_practices
+#   type: best_practices
+#   image: golang:1.9.2-alpine
+#   before_script:
+#   - apk add --no-cache git
+#   only:
+#   - /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)-rc(?:0|[1-9]\d*)$/
+#   allow_failure: true
 
 .job_template_build: &job_build
   type: build
@@ -84,22 +84,21 @@ variables:
   HELM_PATH: ops/Helm/go-logger
   DOCKER_IMAGE_URL: cros/go-logger
 
-lint:
-  <<: *job_best_practices
-  script:
-  - go get -u github.com/golang/lint/golint
-  - golint -set_exit_status $(go list ./... | grep -v /vendor/)
-
-unit test:
-  <<: *job_best_practices
-  script:
-  - go test -short $(go list ./... | grep -v /vendor/)
-
-data race:
-  <<: *job_best_practices
-  script:
-  - go test -race -short $(go list ./... | grep -v /vendor/)
-
+# lint:
+#   <<: *job_best_practices
+#   script:
+#   - go get -u github.com/golang/lint/golint
+#   - golint -set_exit_status $(go list ./... | grep -v /vendor/)
+#
+# unit test:
+#   <<: *job_best_practices
+#   script:
+#   - go test -short $(go list ./... | grep -v /vendor/)
+#
+# data race:
+#   <<: *job_best_practices
+#   script:
+#   - go test -race -short $(go list ./... | grep -v /vendor/)
 
 build:staging:
   <<: *job_build
