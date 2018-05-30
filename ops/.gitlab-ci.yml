@@ -37,18 +37,18 @@ variables:
   DOCKER_IMAGE_URL: cros/go-logger
 
 lint:
-  <<: *best_practices
+  <<: *job_best_practices
   script:
   - go get -u github.com/golang/lint/golint
   - golint -set_exit_status $(go list ./... | grep -v /vendor/)
 
 unit test:
-  <<: *best_practices
+  <<: *job_best_practices
   script:
   - go test -short $(go list ./... | grep -v /vendor/)
 
 data race:
-  <<: *best_practices
+  <<: *job_best_practices
   script:
   - go test -race -short $(go list ./... | grep -v /vendor/)
 
