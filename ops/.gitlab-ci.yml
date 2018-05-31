@@ -12,6 +12,10 @@
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   before_script:
+  - apk add --no-cache git
+  - mkdir -p /go/src/$GITHUB_PATH /go/src/_/builds
+  - cp -r $CI_PROJECT_DIR /go/src/$GITHUB_PATH/$CI_PROJECT_NAME
+  - ln -s /go/src/$GITHUB_PATH/$CI_PROJECT_NAME /go/src/_/builds/$CI_PROJECT_NAME
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   tags:
   - docker
@@ -64,11 +68,6 @@
 image: docker:latest
 services:
 - docker:dind
-before_script:
-- apk add --no-cache git
-- mkdir -p /go/src/$GITHUB_PATH /go/src/_/builds
-- cp -r $CI_PROJECT_DIR /go/src/$GITHUB_PATH/$CI_PROJECT_NAME
-- ln -s /go/src/$GITHUB_PATH/$CI_PROJECT_NAME /go/src/_/builds/$CI_PROJECT_NAME
 
 stages:
 # - best_practices
