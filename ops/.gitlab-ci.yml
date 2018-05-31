@@ -13,6 +13,8 @@
     GIT_SUBMODULE_STRATEGY: recursive
   before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  tags:
+  - docker
   except:
   - branches
   when: on_success
@@ -22,6 +24,8 @@
   image: service-image/helm
   variables:
     GIT_STRATEGY: none
+  tags:
+  - registry
   script:
   - export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
   - if [ ${DEPLOYS}  -eq 0 ]; then
@@ -49,6 +53,8 @@
 
 .job_template_publish: &job_publish
   type: publish
+  tags:
+  - docker
   only:
   - /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)-rc(?:0|[1-9]\d*)$/
   except:
