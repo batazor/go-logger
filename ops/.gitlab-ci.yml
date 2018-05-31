@@ -39,8 +39,8 @@
         --set CI_PROJECT_NAME=$CI_PROJECT_NAME
         --set CI_PIPELINE_ID=$CI_PIPELINE_ID
         --set CI_BUILD_ID=$CI_BUILD_ID
-        --set image.repository=$CI_REGISTRY_IMAGE
-        --set image.tag=$CI_COMMIT_TAG
+        --set deployment.image.repository=$CI_REGISTRY_IMAGE
+        --set deployment.image.tag=$CI_COMMIT_TAG
         --set CI_COMMIT_SHA=$CI_COMMIT_SHA
         $HELM_PATH;
     else
@@ -49,8 +49,8 @@
         --set CI_PROJECT_NAME=$CI_PROJECT_NAME
         --set CI_PIPELINE_ID=$CI_PIPELINE_ID
         --set CI_BUILD_ID=$CI_BUILD_ID
-        --set image.repository=$CI_REGISTRY_IMAGE
-        --set image.tag=$CI_COMMIT_TAG
+        --set deployment.image.repository=$CI_REGISTRY_IMAGE
+        --set deployment.image.tag=$CI_COMMIT_TAG
         --set CI_COMMIT_SHA=$CI_COMMIT_SHA;
     fi
   except:
