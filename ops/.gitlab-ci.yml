@@ -75,14 +75,6 @@ stages:
 - publish
 - deploy
 
-cache:
-  paths:
-  - /apt-cache
-  - /go/src/github.com
-  - /go/src/golang.org
-  - /go/src/google.golang.org
-  - /go/src/gopkg.in
-
 variables:
   GITHUB_PATH: gitlab.com/batazor
   PROJECT_NAMESPACE: micro-company
