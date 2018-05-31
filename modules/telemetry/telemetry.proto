@@ -1,0 +1,14 @@
+syntax = "proto3";
+package telemetry;
+
+service Telemetry {
+  rpc SendPacket (PacketRequest) returns (PacketResponse) {}
+}
+
+message PacketRequest {
+  string Packet = 1;
+}
+
+message PacketResponse {
+  bool success = 1;
+}

@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"github.com/batazor/go-logger/modules/amqp"
 	"github.com/batazor/go-logger/modules/influxdb"
+	"github.com/batazor/go-logger/modules/telemetry"
 	"github.com/batazor/go-logger/utils"
 	"github.com/sirupsen/logrus"
-	"net/http"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	"net"
 )
 
 var (
@@ -14,7 +17,10 @@ var (
 
 	packetCh    = make(chan []byte)
 	AMQP_ENABLE = utils.Getenv("AMQP_ENABLE", "false")
+	GRPC_PORT   = utils.Getenv("GRPC_PORT", "50051")
 )
+
+type server struct{}
 
 func init() {
 	// Logging =================================================================
@@ -24,23 +30,30 @@ func init() {
 	log.Formatter = new(logrus.JSONFormatter)
 }
 
-func main() {
-	go influxdb.Connect(packetCh)
-	if AMQP_ENABLE == "true" {
-		go amqp.Listen(packetCh)
-	} else {
-		log.Info("AMQP disable")
-	}
-
-	http.HandleFunc("/hello", Hello)
-	err := http.ListenAndServe(":8080", nil) // set listen port
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
-
-	log.Info("Listen HTTP 8080")
+func (s *server) SendPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.PacketResponse, error) {
+	return &telemetry.PacketResponse{Success: true}, nil
 }
 
-func Hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World")
+func main() {
+	// Run InfluxDB
+	go influxdb.Connect(packetCh)
+
+	// Run AMQP
+	if AMQP_ENABLE == "true" {
+		go amqp.Listen(packetCh)
+	}
+
+	// Run gRPC
+	port := fmt.Sprintf(":%s", GRPC_PORT)
+	lis, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatal("Open port: ", err)
+	}
+	s := grpc.NewServer()
+	telemetry.RegisterTelemetryServer(s, &server{})
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to server: %v", err)
+	} else {
+		log.Info("Run gRPC on port " + port)
+	}
 }

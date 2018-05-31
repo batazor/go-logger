@@ -18,6 +18,7 @@ $ docker exec -it influxdb influx
 
 | Name                  | Default value                      |
 |-----------------------|------------------------------------|
+| GRPC_PORT             | "50051"                            |
 | AMQP_ENABLE           | false                              |
 | AMQP_API              | amqp://guest:guest@localhost:5672/ |
 | AMQP_NAME_QUEUE       | go-logger-packets                  |
