@@ -142,6 +142,6 @@ chart:
 deploy:staging:
   <<: *job_deploy
   variables:
-    HELM_CONTEXT: minikube
+    HELM_CONTEXT: $HELM_CONTEXT
   only:
     - /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)-rc(?:0|[1-9]\d*)$/
