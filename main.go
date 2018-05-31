@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/batazor/go-logger/modules/amqp"
 	"github.com/batazor/go-logger/modules/influxdb"
+	"github.com/batazor/go-logger/utils"
 	"github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -11,7 +12,8 @@ import (
 var (
 	log = logrus.New()
 
-	packetCh = make(chan []byte)
+	packetCh    = make(chan []byte)
+	AMQP_ENABLE = utils.Getenv("AMQP_ENABLE", "false")
 )
 
 func init() {
@@ -24,7 +26,11 @@ func init() {
 
 func main() {
 	go influxdb.Connect(packetCh)
-	go amqp.Listen(packetCh)
+	if AMQP_ENABLE == "true" {
+		go amqp.Listen(packetCh)
+	} else {
+		log.Info("AMQP disable")
+	}
 
 	http.HandleFunc("/hello", Hello)
 	err := http.ListenAndServe(":8080", nil) // set listen port
