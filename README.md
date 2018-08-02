@@ -30,6 +30,12 @@ $ docker exec -it influxdb influx
 | DB_PASSWORD           | "telemetry"                                |
 | DB_ID                 | "_oid"                                     |
 
+### Feature
+
++ Support transports
+    + AMQP (RabbitMQ)
++ Grafana dashboard
+
 ### Benchmark
 
 ##### Run bot
