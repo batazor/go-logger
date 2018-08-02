@@ -16,14 +16,134 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
+  "iteration": 1533247977202,
   "links": [],
   "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Telemetry",
+      "fill": 1,
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "10s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "linear"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "measurement": "/^$ID$/",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "unixtime"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "sum"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "telemetry",
+              "operator": "=",
+              "value": "raw"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Panel Title",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
     {
       "columns": [],
       "datasource": null,
       "fontSize": "100%",
       "gridPos": {
-        "h": 22,
+        "h": 19,
         "w": 12,
         "x": 12,
         "y": 0
@@ -75,7 +195,7 @@
             }
           ],
           "hide": false,
-          "measurement": "February",
+          "measurement": "/^$ID$/",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -148,135 +268,105 @@
       "title": "Panel Title",
       "transform": "table",
       "type": "table"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "Telemetry",
-      "fill": 1,
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 14
-      },
-      "id": 2,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pointradius": 5,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "10s"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "linear"
-              ],
-              "type": "fill"
-            }
-          ],
-          "hide": false,
-          "measurement": "April",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "unixtime"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "sum"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "telemetry",
-              "operator": "=",
-              "value": "raw"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Panel Title",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
     }
   ],
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "April + March",
+          "value": [
+            "April",
+            "March"
+          ]
+        },
+        "datasource": "Telemetry",
+        "hide": 0,
+        "includeAll": false,
+        "label": "ID",
+        "multi": true,
+        "name": "ID",
+        "options": [
+          {
+            "selected": true,
+            "text": "April",
+            "value": "April"
+          },
+          {
+            "selected": false,
+            "text": "August",
+            "value": "August"
+          },
+          {
+            "selected": false,
+            "text": "December",
+            "value": "December"
+          },
+          {
+            "selected": false,
+            "text": "February",
+            "value": "February"
+          },
+          {
+            "selected": false,
+            "text": "January",
+            "value": "January"
+          },
+          {
+            "selected": false,
+            "text": "July",
+            "value": "July"
+          },
+          {
+            "selected": false,
+            "text": "June",
+            "value": "June"
+          },
+          {
+            "selected": true,
+            "text": "March",
+            "value": "March"
+          },
+          {
+            "selected": false,
+            "text": "May",
+            "value": "May"
+          },
+          {
+            "selected": false,
+            "text": "November",
+            "value": "November"
+          },
+          {
+            "selected": false,
+            "text": "October",
+            "value": "October"
+          },
+          {
+            "selected": false,
+            "text": "September",
+            "value": "September"
+          }
+        ],
+        "query": "SHOW MEASUREMENTS ON \"telemetry\"",
+        "refresh": 0,
+        "regex": "",
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -307,5 +397,5 @@
   "timezone": "",
   "title": "Telemetry",
   "uid": "rKRhmz5mz",
-  "version": 4
+  "version": 6
 }
