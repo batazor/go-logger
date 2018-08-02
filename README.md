@@ -36,6 +36,21 @@ $ docker exec -it influxdb influx
     + AMQP (RabbitMQ)
 + Grafana dashboard
 
+#### Grafana
+
+<details><summary>CLICK ME</summary>
+<p>
+
+##### Grafana dashboard example
+
+![Grafana dashboard example](./docs/grafana-example-dashboard.png)
+
+**Support:**
+- Group by ID object
+
+</p>
+</details>
+
 ### Benchmark
 
 ##### Run bot
