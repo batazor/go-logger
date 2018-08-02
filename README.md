@@ -32,6 +32,10 @@ $ docker exec -it influxdb influx
 
 ### Benchmark
 
+##### Run bot
+
+Run `go run /tests/bot/bot.go`
+
 ##### Read from AMQP queue (1M message/1 instance)
 
 ![read_packets](./docs/read_packet.png)
