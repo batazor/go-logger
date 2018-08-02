@@ -18,6 +18,7 @@ $ docker exec -it influxdb influx
 
 | Name                  | Default value                      |
 |-----------------------|------------------------------------|
+| GRPC_ENABLE           | false                              |
 | GRPC_PORT             | "50051"                            |
 | AMQP_ENABLE           | false                              |
 | AMQP_API              | amqp://guest:guest@localhost:5672/ |
@@ -27,3 +28,4 @@ $ docker exec -it influxdb influx
 | DB_NAME               | "telemetry"                        |
 | DB_USERNAME           | "telemetry"                        |
 | DB_PASSWORD           | "telemetry"                        |
+| DB_ID                 | "_oid"                             |

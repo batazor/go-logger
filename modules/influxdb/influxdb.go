@@ -13,8 +13,9 @@ var (
 
 	DB_URL      = utils.Getenv("DB_URL", "http://localhost:8086")
 	DB_NAME     = utils.Getenv("DB_NAME", "telemetry")
-	DB_USERNAME = utils.Getenv("DB_NAME", "telemetry")
-	DB_PASSWORD = utils.Getenv("DB_NAME", "telemetry")
+	DB_USERNAME = utils.Getenv("DB_USERNAME", "telemetry")
+	DB_PASSWORD = utils.Getenv("DB_PASSWORD", "telemetry")
+	DB_ID       = utils.Getenv("DB_ID", "_oid")
 
 	CLIENT client.Client
 )
@@ -56,7 +57,7 @@ func Connect(packetCh chan []byte) {
 				// Create a point and add to batch
 				tags := map[string]string{"telemetry": "raw"}
 
-				pt, err := client.NewPoint(fields["_oid"].(string), tags, fields, time.Now())
+				pt, err := client.NewPoint(fields[DB_ID].(string), tags, fields, time.Now())
 				if err != nil {
 					log.Fatal(err)
 				}

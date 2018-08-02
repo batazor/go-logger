@@ -17,6 +17,7 @@ var (
 
 	packetCh    = make(chan []byte)
 	AMQP_ENABLE = utils.Getenv("AMQP_ENABLE", "false")
+	GRPC_ENABLE = utils.Getenv("GRPC_ENABLE", "false")
 	GRPC_PORT   = utils.Getenv("GRPC_PORT", "50051")
 )
 
@@ -44,16 +45,18 @@ func main() {
 	}
 
 	// Run gRPC
-	port := fmt.Sprintf(":%s", GRPC_PORT)
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatal("Open port: ", err)
-	}
-	s := grpc.NewServer()
-	telemetry.RegisterTelemetryServer(s, &server{})
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to server: %v", err)
-	} else {
-		log.Info("Run gRPC on port " + port)
+	if GRPC_ENABLE == "true" {
+		port := fmt.Sprintf(":%s", GRPC_PORT)
+		lis, err := net.Listen("tcp", port)
+		if err != nil {
+			log.Fatal("Open port: ", err)
+		}
+		s := grpc.NewServer()
+		telemetry.RegisterTelemetryServer(s, &server{})
+		if err := s.Serve(lis); err != nil {
+			log.Fatalf("failed to server: %v", err)
+		} else {
+			log.Info("Run gRPC on port " + port)
+		}
 	}
 }
