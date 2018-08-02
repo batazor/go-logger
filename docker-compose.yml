@@ -2,13 +2,20 @@ version: "3"
 
 services:
 
+  rabbitmq:
+    image: rabbitmq:3.7-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: telemetry
+      RABBITMQ_DEFAULT_PASS: telemetry
+    ports:
+    - "15672:15672"
+
+
   influxdb:
     image: influxdb:alpine
     container_name: influxdb
     ports:
-    - "8083:8083"
     - "8086:8086"
-    - "8090:8090"
     environment:
       INFLUXDB_ADMIN_ENABLED: "true"
       INFLUXDB_DB: telemetry
