@@ -15,17 +15,17 @@ type State struct {
 }
 
 type Packet struct {
-	Oid       string   `faker:"username" json:"_oid"`
-	UserName  string   `faker:"username" json:"username"`
-	UnixTime  int64    `faker:"unix_time" json:"unixtime"`
-	Date      []string `faker:"date" json:"date"`
-	MonthName string   `faker:"month_name" json:"monthName"`
-	Year      []string `faker:"year" json:"year"`
-	DayOfWeek string   `faker:"day_of_week" json:"dayOfWeek"`
-	Timestamp string   `faker:"timestamp" json:"timestamp"`
-	TimeZone  string   `faker:"timezone"  json:"timezone"`
-	IPV4      string   `faker:"ipv4" json:"IPv4"`
-	State     State    `json:"state"`
+	Oid       string `faker:"username" json:"_oid"`
+	UserName  string `faker:"username" json:"username"`
+	UnixTime  int64  `faker:"unix_time" json:"unixtime"`
+	Date      string `faker:"date" json:"date"`
+	MonthName string `faker:"month_name" json:"monthName"`
+	Year      string `faker:"year" json:"year"`
+	DayOfWeek string `faker:"day_of_week" json:"dayOfWeek"`
+	Timestamp string `faker:"timestamp" json:"timestamp"`
+	TimeZone  string `faker:"timezone"  json:"timezone"`
+	IPV4      string `faker:"ipv4" json:"IPv4"`
+	State     State  `json:"state"`
 }
 
 func getRandomPacket() (interface{}, error) {
