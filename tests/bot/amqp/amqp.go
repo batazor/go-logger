@@ -41,8 +41,8 @@ func Publish(message []byte) error {
 		name := strings.Trim(echangeName, " ")
 		err = AMQP_CH.ExchangeDeclare(
 			name,
-			"direct",
-			true,
+			"fanout",
+			false,
 			false,
 			false,
 			false,
@@ -53,7 +53,7 @@ func Publish(message []byte) error {
 
 	AMQP_Q, err := AMQP_CH.QueueDeclare(
 		AMQP_NAME_QUEUE,
-		true,
+		false,
 		false,
 		false,
 		false,
@@ -80,7 +80,7 @@ func Publish(message []byte) error {
 			false,
 			amqp.Publishing{
 				ContentType:  "application/json",
-				DeliveryMode: amqp.Persistent,
+				DeliveryMode: amqp.Transient,
 				Body:         message,
 				Timestamp:    time.Now(),
 			},

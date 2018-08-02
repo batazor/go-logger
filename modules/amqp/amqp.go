@@ -68,8 +68,8 @@ func Listen(packetCh chan []byte) {
 		name := strings.Trim(echangeName, " ")
 		err = AMQP_CH.ExchangeDeclare(
 			name,
-			"direct",
-			true,
+			"fanout",
+			false,
 			false,
 			false,
 			false,
@@ -80,7 +80,7 @@ func Listen(packetCh chan []byte) {
 
 	AMQP_Q, err := AMQP_CH.QueueDeclare(
 		AMQP_NAME_QUEUE,
-		true,
+		false,
 		false,
 		false,
 		false,

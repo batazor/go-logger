@@ -4,7 +4,6 @@ import (
 	json2 "encoding/json"
 	"github.com/batazor/go-logger/tests/bot/amqp"
 	"github.com/bxcodec/faker"
-	"github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -15,7 +14,7 @@ type State struct {
 }
 
 type Packet struct {
-	Oid       string `faker:"username" json:"_oid"`
+	Oid       string `faker:"month_name" json:"_oid"`
 	UserName  string `faker:"username" json:"username"`
 	UnixTime  int64  `faker:"unix_time" json:"unixtime"`
 	Date      string `faker:"date" json:"date"`
@@ -26,6 +25,7 @@ type Packet struct {
 	TimeZone  string `faker:"timezone"  json:"timezone"`
 	IPV4      string `faker:"ipv4" json:"IPv4"`
 	State     State  `json:"state"`
+	Bool      bool
 }
 
 func getRandomPacket() (interface{}, error) {
@@ -40,16 +40,24 @@ func getRandomPacket() (interface{}, error) {
 
 func main() {
 	packetCh := make(chan interface{}, 1)
-	go func() {
-		time.Sleep(time.Millisecond * 10)
+	var task = func() {
+		time.Sleep(time.Millisecond * 100)
 		packet, _ := getRandomPacket()
 		packetCh <- packet
-	}()
+	}
+	go task()
 
-	select {
-	case res := <-packetCh:
-		json, _ := json2.Marshal(res)
-		logrus.Info("json", string(json))
-		amqp.Publish([]byte(json))
+	for {
+		select {
+		case res := <-packetCh:
+			json, _ := json2.Marshal(res)
+			//logrus.Info("json", string(json))
+
+			for i := 0; i < 100; i++ {
+				amqp.Publish([]byte(json))
+			}
+
+			go task()
+		}
 	}
 }
