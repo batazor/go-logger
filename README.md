@@ -4,6 +4,9 @@ Writes telemetry to TSDB
 
 ### Getting start
 
+<details><summary>CLICK ME</summary>
+<p>
+
 ```
 # Run services
 $ docker-compose up
@@ -13,6 +16,9 @@ $ docker exec -it influxdb influx
 > create database telemetry
 > exit
 ```
+
+</p>
+</details>
 
 ### ENV
 
@@ -53,6 +59,9 @@ $ docker exec -it influxdb influx
 
 ### Benchmark
 
+<details><summary>CLICK ME</summary>
+<p>
+
 ##### Run bot
 
 Run `go run /tests/bot/bot.go`
@@ -60,3 +69,7 @@ Run `go run /tests/bot/bot.go`
 ##### Read from AMQP queue (1M message/1 instance)
 
 ![read_packets](./docs/read_packet.png)
+
+</p>
+</details>
+
