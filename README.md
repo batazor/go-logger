@@ -29,3 +29,9 @@ $ docker exec -it influxdb influx
 | DB_USERNAME           | "telemetry"                                |
 | DB_PASSWORD           | "telemetry"                                |
 | DB_ID                 | "_oid"                                     |
+
+### Benchmark
+
+##### Read from AMQP queue (1M message/1 instance)
+
+![read_packets](./docs/read_packet.png)
