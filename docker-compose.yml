@@ -8,6 +8,7 @@ services:
       RABBITMQ_DEFAULT_USER: telemetry
       RABBITMQ_DEFAULT_PASS: telemetry
     ports:
+    - "5672:5672"
     - "15672:15672"
 
 

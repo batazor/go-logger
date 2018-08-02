@@ -17,7 +17,7 @@ var (
 
 	packetCh    = make(chan []byte)
 	AMQP_ENABLE = utils.Getenv("AMQP_ENABLE", "false")
-	GRPC_ENABLE = utils.Getenv("GRPC_ENABLE", "false")
+	GRPC_ENABLE = utils.Getenv("GRPC_ENABLE", "true")
 	GRPC_PORT   = utils.Getenv("GRPC_PORT", "50051")
 )
 

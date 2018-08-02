@@ -4,10 +4,8 @@ import (
 	"github.com/batazor/go-logger/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
-	"os"
-	"os/signal"
 	"strings"
-	"syscall"
+	"time"
 )
 
 var (
@@ -19,9 +17,6 @@ var (
 
 	AMQP_CH amqp.Channel
 	AMQP_Q  amqp.Queue
-
-	forever      = make(chan bool)
-	gracefulStop = make(chan os.Signal)
 )
 
 func init() {
@@ -30,31 +25,9 @@ func init() {
 	// it to use a custom JSONFormatter. See the logrus docs for how to
 	// configure the backend at github.com/Sirupsen/logrus
 	log.Formatter = new(logrus.JSONFormatter)
-
-	// Gracefully stop application
-	signal.Notify(gracefulStop, syscall.SIGTERM)
-
-	go func() {
-		for {
-			select {
-			case <-gracefulStop:
-				exchangeList := strings.Split(AMQP_EXCHANGE_LIST, ",")
-				for _, echangeName := range exchangeList {
-					name := strings.Trim(echangeName, " ")
-					err := AMQP_CH.QueueUnbind(
-						AMQP_Q.Name,
-						name,
-						"",
-						nil,
-					)
-					utils.FailOnError(err, "Failed to unbind a queue")
-				}
-			}
-		}
-	}()
 }
 
-func Listen(packetCh chan []byte) {
+func Publish(message []byte) error {
 	AMQP_CONN, err := amqp.Dial(AMQP_API)
 	utils.FailOnError(err, "Failed to connect to RabbitMQ")
 	defer AMQP_CONN.Close()
@@ -90,6 +63,7 @@ func Listen(packetCh chan []byte) {
 
 	for _, echangeName := range exchangeList {
 		name := strings.Trim(echangeName, " ")
+
 		err = AMQP_CH.QueueBind(
 			AMQP_Q.Name,
 			"",
@@ -98,25 +72,21 @@ func Listen(packetCh chan []byte) {
 			nil,
 		)
 		utils.FailOnError(err, "Failed to bind a queue")
+
+		err = AMQP_CH.Publish(
+			"",
+			AMQP_Q.Name,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:  "application/json",
+				DeliveryMode: amqp.Persistent,
+				Body:         message,
+				Timestamp:    time.Now(),
+			},
+		)
+		utils.FailOnError(err, "Failed to bind a queue")
 	}
 
-	msgs, err := AMQP_CH.Consume(
-		AMQP_Q.Name,
-		"go-logger",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	utils.FailOnError(err, "Failed to register a consumer")
-
-	go func() {
-		for d := range msgs {
-			packetCh <- d.Body
-		}
-	}()
-
-	log.Info(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	return nil
 }

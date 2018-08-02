@@ -2,6 +2,15 @@
 
 
 [[projects]]
+  name = "github.com/bxcodec/faker"
+  packages = [
+    ".",
+    "support/slice"
+  ]
+  revision = "1e3dfd53d826aa0d096d235cf8525149287a2834"
+  version = "v1.4.3"
+
+[[projects]]
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
@@ -127,6 +136,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f8e4532125b54cc53c3641286ba1f41c5c29d2c6f528b7b7d1904f3bf5072f84"
+  inputs-digest = "62e11c7478345eb678f33f62cd9ed2c06132624b9c1a6ebf4ae50aef77e27acc"
   solver-name = "gps-cdcl"
   solver-version = 1

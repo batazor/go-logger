@@ -53,6 +53,6 @@
   branch = "master"
   name = "golang.org/x/net"
 
-[[override]]
+[[constraint]]
   name = "github.com/bxcodec/faker"
   version = "1.4.3"
