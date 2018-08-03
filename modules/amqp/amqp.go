@@ -68,7 +68,7 @@ func Listen(packetCh chan []byte) {
 		name := strings.Trim(echangeName, " ")
 		err = AMQP_CH.ExchangeDeclare(
 			name,
-			"fanout",
+			"headers",
 			false,
 			false,
 			false,

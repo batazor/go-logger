@@ -38,16 +38,16 @@
         --namespace=$PROJECT_NAMESPACE
         --set deployment.image.repository=$CI_REGISTRY_IMAGE
         --set deployment.image.tag=$CI_COMMIT_TAG
-        --set env.AMQP_API=$AMQP_API
-        --set env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST
+        --set deployment.env.AMQP_API=$AMQP_API
+        --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST
         $HELM_PATH;
     else
       helm --kube-context $HELM_CONTEXT upgrade $CI_PROJECT_NAME $HELM_PATH
         --namespace=$PROJECT_NAMESPACE
         --set deployment.image.repository=$CI_REGISTRY_IMAGE
         --set deployment.image.tag=$CI_COMMIT_TAG
-        --set env.AMQP_API=$AMQP_API
-        --set env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST;
+        --set deployment.env.AMQP_API=$AMQP_API
+        --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST;
     fi
   except:
   - branches
