@@ -1,0 +1,20 @@
+{{- if .Values.deployment.podDisruptionBudget -}}
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    app: {{ template "logger.name" . }}
+    chart: {{ template "logger.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.extraLabels }}
+{{ toYaml .Values.extraLabels | indent 4 }}
+{{- end }}
+  name: {{ template "logger-replicaset.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "logger.name" . }}
+      release: {{ .Release.Name }}
+{{ toYaml .Values.deployment.podDisruptionBudget | indent 2 }}
+{{- end -}}

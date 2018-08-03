@@ -4,35 +4,46 @@ metadata:
   name: {{ template "logger.fullname" . }}
   labels:
     app: {{ template "logger.name" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    chart: {{ template "logger.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if .Values.extraLabels }}
+{{ toYaml .Values.extraLabels | indent 4 }}
+{{- end }}
 spec:
-  replicas: 1
+  serviceName: {{ template "logger.fullname" . }}
+  replicas: {{ .Values.deployment.replicaCount }}
   revisionHistoryLimit: 2
-  strategy:
-    type: RollingUpdate
+  updateStrategy:
+    type: {{ .Values.deployment.updateStrategy }}
     rollingUpdate:
       maxUnavailable: 1
   selector:
     matchLabels:
       app: {{ template "logger.name" . }}
+      release: {{ .Release.Name }}
   template:
-    metadata:
-      labels:
-        app: {{ template "logger.name" . }}
-        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-        release: "{{ .Release.Name }}"
-        heritage: "{{ .Release.Service }}"
-      annotations:
+    annotations:
       {{- range $key, $value := .Values.deployment.annotations }}
         {{ $key }}: {{ $value }}
       {{- end }}
+{{- if and .Values.prometheus.exporter.enabled  (not .Values.prometheus.operator.enabled) }}
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.prometheus.exporter.port | quote }}
+{{- end }}
+      labels:
+        app: {{ template "logger.name" . }}
+        release: "{{ .Release.Name }}"
+        chart: {{ template "logger.chart" . }}
     spec:
+      serviceAccountName: {{ template "logger.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
       {{- if .Values.deployment.nodeSelector }}
+      securityContext:
+        {{ toYaml .Values.securityContext | indent 8 }}
       nodeSelector:
-{{ toYaml .Values.deployment.nodeSelector | indent 8 }}
-      {{- end }}
+ {{ toYaml .Values.deployment.nodeSelector | indent 8 }}
+       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
       {{- with .Values.deployment.affinity }}
       affinity:
@@ -49,18 +60,43 @@ spec:
       {{- end}}
       {{- end }}
       containers:
-      - name: logger
+      - name: {{ .Chart.Name }}
         image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
         imagePullPolicy: {{ .Values.deployment.image.pullPolicy | quote }}
-        # command:
-        # args:
+        {{- if .Values.args }}
+        args:
+{{ toYaml .Values.args | indent 10 }}
+        {{- end }}
         env:
 {{- range $key, $value := .Values.deployment.env }}
         - name: {{ $key }}
           value: {{ $value | quote }}
 {{- end }}
         ports:
-        - name: api
-          containerPort: 8080
+        - name: exporter
+          protocol: TCP
+          containerPort: {{ .Values.prometheus.exporter.port }}
+        {{- if .Values.deployment.livenessProbe.enabled }}
+        livenessProbe:
+          initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.deployment.livenessProbe.successThreshold }}
+          failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
+          exec:
+            command:
+            - echo 0
+        {{- end }}
+        {{- if .Values.deployment.livenessProbe.enabled }}
+        readinessProbe:
+          initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
+          successThreshold: {{ .Values.deployment.readinessProbe.successThreshold }}
+          failureThreshold: {{ .Values.deployment.readinessProbe.failureThreshold }}
+          exec:
+            command:
+            - echo 0
+        {{- end }}
         resources:
 {{ toYaml .Values.deployment.resources | indent 10 }}

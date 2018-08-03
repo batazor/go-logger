@@ -1,0 +1,41 @@
+{{- if .Values.networkPolicy.enabled }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ template "logger.fullname" . }}
+  labels:
+    app: {{ template "logger.name" . }}
+    chart: {{ template "logger.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ template "logger.name" . }}
+  ingress:
+    # Allow inbound connections
+    - ports:
+      - port: 6379
+      {{- if not .Values.networkPolicy.allowExternal }}
+      from:
+        - podSelector:
+            matchExpressions:
+            - key: {{ template "logger.fullname" . }}-client
+              operator: In
+              values:
+              - "true"
+            - key: app
+              operator: In
+              values:
+              - prometheus
+            - key: prometheus
+              operator: In
+              values:
+              - k8s
+      {{- end }}
+    {{- if .Values.prometheus.exporter.enabled }}
+    # Allow prometheus scrapes for metrics
+    - ports:
+      - port: {{ .Values.prometheus.exporter.port }}
+    {{- end }}
+{{- end }}

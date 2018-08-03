@@ -30,7 +30,7 @@ $ docker exec -it influxdb influx
 | AMQP_API              | amqp://telemetry:telemetry@localhost:5672/ |
 | AMQP_NAME_QUEUE       | go-logger-packets                          |
 | AMQP_EXCHANGE_LIST    | "demo1, demo2"                             |
-| DB_URL                | "http://localhost:8086"                    |
+| DB_URL                | "http://influxdb:8086"                    |
 | DB_NAME               | "telemetry"                                |
 | DB_USERNAME           | "telemetry"                                |
 | DB_PASSWORD           | "telemetry"                                |
@@ -72,4 +72,3 @@ Run `go run /tests/bot/bot.go`
 
 </p>
 </details>
-
