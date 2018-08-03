@@ -132,6 +132,8 @@ chart:
 deploy:staging:
   <<: *job_deploy
   variables:
-    HELM_CONTEXT: $HELM_CONTEXT
+    HELM_CONTEXT: $STAGING_HELM_CONTEXT
+  environment:
+    name: Staging
   only:
     - /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)-rc(?:0|[1-9]\d*)$/
