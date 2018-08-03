@@ -16,7 +16,7 @@ var (
 	log = logrus.New()
 
 	packetCh    = make(chan []byte)
-	AMQP_ENABLE = utils.Getenv("AMQP_ENABLE", "false")
+	AMQP_ENABLE = utils.Getenv("AMQP_ENABLE", "true")
 	GRPC_ENABLE = utils.Getenv("GRPC_ENABLE", "true")
 	GRPC_PORT   = utils.Getenv("GRPC_PORT", "50051")
 )

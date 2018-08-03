@@ -26,7 +26,7 @@ $ docker exec -it influxdb influx
 |-----------------------|--------------------------------------------|
 | GRPC_ENABLE           | true                                       |
 | GRPC_PORT             | "50051"                                    |
-| AMQP_ENABLE           | false                                      |
+| AMQP_ENABLE           | true                                      |
 | AMQP_API              | amqp://telemetry:telemetry@localhost:5672/ |
 | AMQP_NAME_QUEUE       | go-logger-packets                          |
 | AMQP_EXCHANGE_LIST    | "demo1, demo2"                             |
