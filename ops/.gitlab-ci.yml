@@ -32,19 +32,17 @@
   tags:
   - registry
   script:
-  - export DEPLOYS=$(helm ls | grep $RELEASE_NAME | wc -l)
+  - export DEPLOYS=$(helm ls | grep $CI_PROJECT_NAME | wc -l)
   - if [ ${DEPLOYS}  -eq 0 ]; then
       helm --kube-context $HELM_CONTEXT install
-        --name $RELEASE_NAME
-        --namespace=$CI_PROJECT_NAMESPACE
-        --set CI_PROJECT_NAME=$CI_PROJECT_NAME
+        --name $CI_PROJECT_NAME
+        --namespace=$PROJECT_NAMESPACE
         --set deployment.image.repository=$CI_REGISTRY_IMAGE
         --set deployment.image.tag=$CI_COMMIT_TAG
         $HELM_PATH;
     else
-      helm --kube-context $HELM_CONTEXT upgrade $RELEASE_NAME $HELM_PATH
-        --namespace=$CI_PROJECT_NAMESPACE
-        --set CI_PROJECT_NAME=$CI_PROJECT_NAME
+      helm --kube-context $HELM_CONTEXT upgrade $CI_PROJECT_NAME $HELM_PATH
+        --namespace=$PROJECT_NAMESPACE
         --set deployment.image.repository=$CI_REGISTRY_IMAGE
         --set deployment.image.tag=$CI_COMMIT_TAG;
     fi
@@ -73,9 +71,8 @@ stages:
 - deploy
 
 variables:
-  GITHUB_PATH: gitlab.com/batazor
-  PROJECT_NAMESPACE: $CI_PROJECT_NAMESPACE
-  RELEASE_NAME: $RELEASE_NAME
+  GITHUB_PATH: github.com/batazor
+  PROJECT_NAMESPACE: $PROJECT_NAMESPACE
   DOCKER_IMAGE_URL: cros/go-logger
   HELM_PATH: ops/Helm/go-logger
   HELM_VERSION: v2.9.1
