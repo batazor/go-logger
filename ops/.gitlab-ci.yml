@@ -38,21 +38,15 @@
         --name $RELEASE_NAME
         --namespace=$CI_PROJECT_NAMESPACE
         --set CI_PROJECT_NAME=$CI_PROJECT_NAME
-        --set CI_PIPELINE_ID=$CI_PIPELINE_ID
-        --set CI_BUILD_ID=$CI_BUILD_ID
         --set deployment.image.repository=$CI_REGISTRY_IMAGE
         --set deployment.image.tag=$CI_COMMIT_TAG
-        --set CI_COMMIT_SHA=$CI_COMMIT_SHA
         $HELM_PATH;
     else
       helm --kube-context $HELM_CONTEXT upgrade $RELEASE_NAME $HELM_PATH
         --namespace=$CI_PROJECT_NAMESPACE
         --set CI_PROJECT_NAME=$CI_PROJECT_NAME
-        --set CI_PIPELINE_ID=$CI_PIPELINE_ID
-        --set CI_BUILD_ID=$CI_BUILD_ID
         --set deployment.image.repository=$CI_REGISTRY_IMAGE
-        --set deployment.image.tag=$CI_COMMIT_TAG
-        --set CI_COMMIT_SHA=$CI_COMMIT_SHA;
+        --set deployment.image.tag=$CI_COMMIT_TAG;
     fi
   except:
   - branches
@@ -80,10 +74,11 @@ stages:
 
 variables:
   GITHUB_PATH: gitlab.com/batazor
-  PROJECT_NAMESPACE: micro-company
-  RELEASE_NAME: $CI_PROJECT_NAME
-  HELM_PATH: ops/Helm/go-logger
+  PROJECT_NAMESPACE: $CI_PROJECT_NAMESPACE
+  RELEASE_NAME: $RELEASE_NAME
   DOCKER_IMAGE_URL: cros/go-logger
+  HELM_PATH: ops/Helm/go-logger
+  HELM_VERSION: v2.9.1
 
 # lint:
 #   <<: *job_best_practices
@@ -117,13 +112,13 @@ chart:
   - apk add --update git openssl
 
   # install Helm
-  - wget https://kubernetes-helm.storage.googleapis.com/helm-v2.9.1-linux-amd64.tar.gz
-  - tar -xvf helm-v2.9.1-linux-amd64.tar.gz
+  - wget https://kubernetes-helm.storage.googleapis.com/helm-$HELM_VERSION-linux-amd64.tar.gz
+  - tar -xvf helm-$HELM_VERSION-linux-amd64.tar.gz
   - mv linux-amd64/helm /usr/local/bin/helm
   - helm init -c
 
   # update charts
-  - git clone https://$GITHUB_USER:$GITHUB_PASSWORD@github.com/micro-company/charts.git
+  - git clone https://$GITHUB_USER:$GITHUB_PASSWORD@$GITHUB_REPOSITORY_URL
   - helm package $HELM_PATH
   - mv *.tgz charts/docs
   - helm repo index charts/docs
