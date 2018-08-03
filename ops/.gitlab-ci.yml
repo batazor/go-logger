@@ -22,8 +22,8 @@
   - protoc -I modules/telemetry/ modules/telemetry/telemetry.proto --go_out=plugins=grpc:modules/telemetry
   tags:
   - docker
-  except:
-  - branches
+  # except:
+  # - branches
   when: on_success
 
 .job_template_deploy: &job_deploy
