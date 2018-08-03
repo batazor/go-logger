@@ -6,8 +6,8 @@ deployment:
     # minAvailable: 2
 
   securityContext:
-    runAsUser: 999
-    fsGroup: 999
+    runAsUser: 997
+    fsGroup: 997
     runAsNonRoot: true
 
   ## Duration in seconds the pod needs to terminate gracefully
