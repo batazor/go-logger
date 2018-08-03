@@ -43,6 +43,7 @@ func Connect(packetCh chan []byte) {
 			select {
 			case packet := <-packetCh:
 				// Parse
+				log.Info("JSON: ", string(packet))
 				fields := map[string]interface{}{}
 				err := json.Unmarshal(packet, &fields)
 				utils.FailOnError(err, "Error parse packet")
