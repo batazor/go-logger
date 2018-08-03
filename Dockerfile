@@ -7,7 +7,7 @@ RUN apk add --update ca-certificates git && \
 # Build project
 WORKDIR /go/src/github.com/batazor/go-logger
 COPY . .
-RUN dep ensure
+# RUN dep ensure
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 
 FROM alpine:latest

@@ -186,13 +186,18 @@ prometheus:
       selector:
         prometheus: kube-prometheus
 
-chronograf: {}
+chronograf:
+  service:
+    type: NodePort
 
 influxdb:
   ## influxdb image version
   ## ref: https://hub.docker.com/r/library/influxdb/tags/
   image:
     tag: 1.6-alpine
+
+  service:
+    type: NodePort
 
   env:
   - name: INFLUXDB_ADMIN_ENABLED
