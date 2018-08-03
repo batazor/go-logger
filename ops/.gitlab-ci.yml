@@ -31,7 +31,7 @@
   tags:
   - registry
   script:
-  - export DEPLOYS=$(helm ls | grep $CI_PROJECT_NAME | wc -l)
+  - export DEPLOYS=$(helm --kube-context $HELM_CONTEXT ls | grep $CI_PROJECT_NAME | wc -l)
   - if [ ${DEPLOYS}  -eq 0 ]; then
       helm --kube-context $HELM_CONTEXT install
         --name $CI_PROJECT_NAME
