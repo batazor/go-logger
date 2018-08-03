@@ -7,9 +7,6 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-    pipeline_id: "{{ .Values.CI_PIPELINE_ID }}"
-    build_id: "{{ .Values.CI_BUILD_ID }}"
-    commit_sha: "{{ .Values.CI_COMMIT_SHA }}"
 spec:
   type: {{ .Values.service.type }}
   ports:

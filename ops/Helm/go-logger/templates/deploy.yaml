@@ -7,9 +7,6 @@ metadata:
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
     heritage: "{{ .Release.Service }}"
-    pipeline_id: "{{ .Values.CI_PIPELINE_ID }}"
-    build_id: "{{ .Values.CI_BUILD_ID }}"
-    commit_sha: "{{ .Values.CI_COMMIT_SHA }}"
 spec:
   replicas: 1
   revisionHistoryLimit: 2
@@ -27,9 +24,6 @@ spec:
         chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
         release: "{{ .Release.Name }}"
         heritage: "{{ .Release.Service }}"
-        pipeline_id: "{{ .Values.CI_PIPELINE_ID }}"
-        build_id: "{{ .Values.CI_BUILD_ID }}"
-        commit_sha: "{{ .Values.CI_COMMIT_SHA }}"
       annotations:
       {{- range $key, $value := .Values.deployment.annotations }}
         {{ $key }}: {{ $value }}
