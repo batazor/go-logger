@@ -17,6 +17,7 @@
   - cp -r $CI_PROJECT_DIR /go/src/$GITHUB_PATH/$CI_PROJECT_NAME
   - ln -s /go/src/$GITHUB_PATH/$CI_PROJECT_NAME /go/src/_/builds/$CI_PROJECT_NAME
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - cd /go/src/$GITHUB_PATH/$CI_PROJECT_NAME
   - protoc -I modules/telemetry/ modules/telemetry/telemetry.proto --go_out=plugins=grpc:modules/telemetry
   tags:
   - docker
