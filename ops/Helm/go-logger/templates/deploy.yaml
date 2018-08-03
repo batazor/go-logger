@@ -23,6 +23,12 @@ spec:
       app: {{ template "logger.name" . }}
       release: {{ .Release.Name }}
   template:
+    metadata:
+      labels:
+        app: {{ template "logger.name" . }}
+        chart: {{ template "logger.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
     annotations:
       {{- range $key, $value := .Values.deployment.annotations }}
         {{ $key }}: {{ $value }}
