@@ -216,6 +216,8 @@ influxdb:
     value: "tsm1"
   - name: INFLUXDB_REPORTING_DISABLED
     value: "false"
+  - name: AMQP_ENABLE
+    value: "true"
 
   ## Change InfluxDB configuration parameters below:
   ## Defaults are indicated
