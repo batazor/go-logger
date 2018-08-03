@@ -38,7 +38,7 @@ func Connect(packetCh chan []byte) {
 	utils.FailOnError(err, "Error create a new HTTPClient")
 	defer CLIENT.Close()
 
-	var wait = func() {
+	go func() {
 		for {
 			select {
 			case packet := <-packetCh:
@@ -70,13 +70,13 @@ func Connect(packetCh chan []byte) {
 				}
 			}
 		}
-	}
-
-	defer func() {
-		if r := recover(); r != nil {
-			log.Warn("Problem in InfluxDB", r)
-
-			go wait()
-		}
 	}()
+
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		log.Warn("Problem in InfluxDB", r)
+	//
+	//		go wait()
+	//	}
+	//}()
 }
