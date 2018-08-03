@@ -2,5 +2,8 @@ dependencies:
 - name: influxdb
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 0.9.1
-digest: sha256:983b7dd36de27216a898a3e7baf825e64880e5a0c854c2a866b329e7cc03258e
-generated: 2018-05-31T14:12:36.209656363+03:00
+- name: chronograf
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 0.4.5
+digest: sha256:b5f093ca63996db298f853ae0b56046ab8f491aecec0b1e0a781558dca1644df
+generated: 2018-08-03T17:27:41.386634337+03:00

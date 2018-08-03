@@ -186,6 +186,8 @@ prometheus:
       selector:
         prometheus: kube-prometheus
 
+chronograf: {}
+
 influxdb:
   ## influxdb image version
   ## ref: https://hub.docker.com/r/library/influxdb/tags/
