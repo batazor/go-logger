@@ -215,13 +215,11 @@ influxdb:
   - name: INFLUXDB_DATA_ENGINE
     value: "tsm1"
   - name: INFLUXDB_REPORTING_DISABLED
-    value: "false"
-  - name: AMQP_ENABLE
     value: "true"
 
   ## Change InfluxDB configuration parameters below:
   ## Defaults are indicated
-  ## ref: https://docs.influxdata.com/influxdb/v1.1/administration/config/
+  ## ref: https://docs.influxdata.com/influxdb/v1.6/administration/config/
   config: {}
 #    reporting_disabled: false
 #    bind_address: 8088
