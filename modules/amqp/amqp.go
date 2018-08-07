@@ -15,13 +15,18 @@ var (
 
 	AMQP_API           = utils.Getenv("AMQP_API", "amqp://telemetry:telemetry@localhost:5672/")
 	AMQP_NAME_QUEUE    = utils.Getenv("AMQP_NAME_QUEUE", "go-logger-packets")
+	AMQP_BINDING_KEY   = utils.Getenv("AMQP_BINDING_KEY", "")
+	AMQP_CONSUMER_TAG  = utils.Getenv("AMQP_CONSUMER_TAG", "")
 	AMQP_EXCHANGE_LIST = utils.Getenv("AMQP_EXCHANGE_LIST", "demo1, demo2")
+	AMQP_EXCHANGE_TYPE = utils.Getenv("AMQP_EXCHANGE_TYPE", "headers")
 
 	AMQP_CH amqp.Channel
 	AMQP_Q  amqp.Queue
 
 	forever      = make(chan bool)
 	gracefulStop = make(chan os.Signal)
+
+	CONSUMER = Consumer{}
 )
 
 func init() {
@@ -33,11 +38,13 @@ func init() {
 
 	// Gracefully stop application
 	signal.Notify(gracefulStop, syscall.SIGTERM)
+	signal.Notify(gracefulStop, syscall.SIGINT)
 
 	go func() {
 		for {
 			select {
 			case <-gracefulStop:
+				// Don't get new message
 				exchangeList := strings.Split(AMQP_EXCHANGE_LIST, ",")
 				for _, echangeName := range exchangeList {
 					name := strings.Trim(echangeName, " ")
@@ -49,74 +56,16 @@ func init() {
 					)
 					utils.FailOnError(err, "Failed to unbind a queue")
 				}
+
+				// Close connect to AMQP
+				if err := CONSUMER.Shutdown(); err != nil {
+					log.Error("Filed shutdown AMQP")
+				}
 			}
 		}
 	}()
 }
 
 func Listen(packetCh chan []byte) {
-	AMQP_CONN, err := amqp.Dial(AMQP_API)
-	utils.FailOnError(err, "Failed to connect to RabbitMQ")
-	defer AMQP_CONN.Close()
-
-	AMQP_CH, err := AMQP_CONN.Channel()
-	utils.FailOnError(err, "Failed to open a channel")
-	defer AMQP_CH.Close()
-
-	exchangeList := strings.Split(AMQP_EXCHANGE_LIST, ",")
-	for _, echangeName := range exchangeList {
-		name := strings.Trim(echangeName, " ")
-		err = AMQP_CH.ExchangeDeclare(
-			name,
-			"headers",
-			false,
-			false,
-			false,
-			false,
-			nil,
-		)
-		utils.FailOnError(err, "Failed to declare the Exchange")
-	}
-
-	AMQP_Q, err := AMQP_CH.QueueDeclare(
-		AMQP_NAME_QUEUE,
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	utils.FailOnError(err, "Failed to declare a queue")
-
-	for _, echangeName := range exchangeList {
-		name := strings.Trim(echangeName, " ")
-		err = AMQP_CH.QueueBind(
-			AMQP_Q.Name,
-			"",
-			name,
-			false,
-			nil,
-		)
-		utils.FailOnError(err, "Failed to bind a queue")
-	}
-
-	msgs, err := AMQP_CH.Consume(
-		AMQP_Q.Name,
-		"go-logger",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	utils.FailOnError(err, "Failed to register a consumer")
-
-	go func() {
-		for d := range msgs {
-			packetCh <- d.Body
-		}
-	}()
-
-	log.Info(" [*] Waiting for messages. To exit press CTRL+C")
-	<-forever
+	CONSUMER, _ = NewConsumer(AMQP_API, AMQP_EXCHANGE_LIST, AMQP_EXCHANGE_TYPE, AMQP_NAME_QUEUE, AMQP_BINDING_KEY, AMQP_CONSUMER_TAG, packetCh)
 }

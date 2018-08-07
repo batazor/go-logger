@@ -26,11 +26,12 @@ $ docker exec -it influxdb influx
 |-----------------------|--------------------------------------------|
 | GRPC_ENABLE           | true                                       |
 | GRPC_PORT             | "50051"                                    |
-| AMQP_ENABLE           | true                                      |
+| AMQP_ENABLE           | true                                       |
 | AMQP_API              | amqp://telemetry:telemetry@localhost:5672/ |
 | AMQP_NAME_QUEUE       | go-logger-packets                          |
 | AMQP_EXCHANGE_LIST    | "demo1, demo2"                             |
-| DB_URL                | "http://influxdb:8086"                    |
+| AMQP_EXCHANGE_TYPE    | "headers"                                   |
+| DB_URL                | "http://influxdb:8086"                     |
 | DB_NAME               | "telemetry"                                |
 | DB_USERNAME           | "telemetry"                                |
 | DB_PASSWORD           | "telemetry"                                |
