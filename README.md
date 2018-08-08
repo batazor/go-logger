@@ -10,11 +10,6 @@ Writes telemetry to TSDB
 ```
 # Run services
 $ docker-compose up
-
-# Create database on influx
-$ docker exec -it influxdb influx
-> create database telemetry
-> exit
 ```
 
 </p>
