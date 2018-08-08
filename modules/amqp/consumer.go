@@ -2,10 +2,11 @@ package amqp
 
 import (
 	"errors"
-	"github.com/batazor/go-logger/utils"
-	"github.com/streadway/amqp"
 	"strings"
 	"time"
+
+	"github.com/batazor/go-logger/utils"
+	"github.com/streadway/amqp"
 )
 
 func NewConsumer(uri, changes, exchangeType, queueName, bindingKey, consumerTag string, packetCh chan []byte) *Consumer {
@@ -14,7 +15,6 @@ func NewConsumer(uri, changes, exchangeType, queueName, bindingKey, consumerTag 
 		changes:      changes,
 		bindingKey:   bindingKey,
 		exchangeType: exchangeType,
-		queueName:    queueName,
 		conn:         nil,
 		channel:      nil,
 		consumerTag:  consumerTag,
@@ -67,14 +67,14 @@ func (c *Consumer) Connect() error {
 
 // AnnounceQueue sets the queue that will be listened to for this
 // connection...
-func (c *Consumer) AnnounceQueue() (<-chan amqp.Delivery, error) {
+func (c *Consumer) AnnounceQueue(queueName string) (<-chan amqp.Delivery, error) {
 	queue, err := c.channel.QueueDeclare(
-		c.queueName, // name of the queue
-		false,       // durable
-		false,       // delete when usused
-		false,       // exclusive
-		false,       // noWait
-		nil,         // arguments
+		queueName, // name of the queue
+		false,     // durable
+		false,     // delete when usused
+		false,     // exclusive
+		false,     // noWait
+		nil,       // arguments
 	)
 	if err != nil {
 		return nil, errors.New("Failed to declare a queue: " + err.Error())
@@ -127,14 +127,14 @@ func (c *Consumer) AnnounceQueue() (<-chan amqp.Delivery, error) {
 // will  likely destroy the error log while waiting for servers to come
 // back online. This requires two parameters which is just to satisfy
 // the AccounceQueue call and allows greater flexability
-func (c *Consumer) ReConnect() (<-chan amqp.Delivery, error) {
+func (c *Consumer) ReConnect(queueName string) (<-chan amqp.Delivery, error) {
 	time.Sleep(30 * time.Second)
 
 	if err := c.Connect(); err != nil {
 		return nil, errors.New("Could not connect in reconnect call: " + err.Error())
 	}
 
-	deliveries, err := c.AnnounceQueue()
+	deliveries, err := c.AnnounceQueue(queueName)
 	if err != nil {
 		return deliveries, errors.New("Couldn't connect")
 	}
@@ -151,13 +151,14 @@ func (c *Consumer) ReConnect() (<-chan amqp.Delivery, error) {
 // without them you would be tied into only using one queue per connection
 func (c *Consumer) Handle(
 	deliveries <-chan amqp.Delivery,
-	fn func(<-chan amqp.Delivery)) {
+	fn func(<-chan amqp.Delivery, chan []byte),
+	packetCh chan []byte) {
 
 	threads := utils.MaxParallelism()
 
 	for {
 		for i := 0; i < threads; i++ {
-			go fn(deliveries)
+			go fn(deliveries, packetCh)
 		}
 
 		// Go into reconnect loop when

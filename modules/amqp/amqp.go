@@ -60,16 +60,16 @@ func Listen(packetCh chan []byte) {
 		log.Warn(err)
 	}
 
-	CONSUMER.Handle(deliveries, CONSUMER.handler)
+	CONSUMER.Handle(deliveries, handler, packetCh)
 }
 
-func (c *Consumer) handler(deliveries <-chan amqp.Delivery) {
+func handler(deliveries <-chan amqp.Delivery, packetCh chan []byte) {
 	threads := utils.MaxParallelism()
 
 	for i := 0; i < threads; i++ {
 		go func() {
 			for d := range deliveries {
-				c.packetCh <- d.Body
+				packetCh <- d.Body
 				d.Ack(false)
 			}
 		}()
