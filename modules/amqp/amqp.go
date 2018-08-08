@@ -55,12 +55,12 @@ func Listen(packetCh chan []byte) {
 		log.Warn(err)
 	}
 
-	deliveries, err := CONSUMER.AnnounceQueue()
+	deliveries, err := CONSUMER.AnnounceQueue(AMQP_NAME_QUEUE)
 	if err != nil {
 		log.Warn(err)
 	}
 
-	CONSUMER.Handle(deliveries, handler, packetCh)
+	CONSUMER.Handle(deliveries, handler, AMQP_NAME_QUEUE, packetCh)
 }
 
 func handler(deliveries <-chan amqp.Delivery, packetCh chan []byte) {

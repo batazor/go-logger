@@ -152,6 +152,7 @@ func (c *Consumer) ReConnect(queueName string) (<-chan amqp.Delivery, error) {
 func (c *Consumer) Handle(
 	deliveries <-chan amqp.Delivery,
 	fn func(<-chan amqp.Delivery, chan []byte),
+	queue string,
 	packetCh chan []byte) {
 
 	threads := utils.MaxParallelism()
@@ -164,7 +165,7 @@ func (c *Consumer) Handle(
 		// Go into reconnect loop when
 		// c.done is passed non nil values
 		if <-c.done != nil {
-			_, err := c.ReConnect()
+			_, err := c.ReConnect(queue)
 			if err != nil {
 				// Very likely chance of failing
 				// should not cause worker to terminate
