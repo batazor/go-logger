@@ -3,10 +3,8 @@ package amqp
 import (
 	"github.com/batazor/go-logger/utils"
 	"github.com/sirupsen/logrus"
-	"github.com/streadway/amqp"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 )
 
@@ -20,10 +18,6 @@ var (
 	AMQP_EXCHANGE_LIST = utils.Getenv("AMQP_EXCHANGE_LIST", "demo1, demo2")
 	AMQP_EXCHANGE_TYPE = utils.Getenv("AMQP_EXCHANGE_TYPE", "headers")
 
-	AMQP_CH amqp.Channel
-	AMQP_Q  amqp.Queue
-
-	forever      = make(chan bool)
 	gracefulStop = make(chan os.Signal)
 
 	CONSUMER = Consumer{}
@@ -44,22 +38,9 @@ func init() {
 		for {
 			select {
 			case <-gracefulStop:
-				// Don't get new message
-				exchangeList := strings.Split(AMQP_EXCHANGE_LIST, ",")
-				for _, echangeName := range exchangeList {
-					name := strings.Trim(echangeName, " ")
-					err := AMQP_CH.QueueUnbind(
-						AMQP_Q.Name,
-						name,
-						"",
-						nil,
-					)
-					utils.FailOnError(err, "Failed to unbind a queue")
-				}
-
 				// Close connect to AMQP
 				if err := CONSUMER.Shutdown(); err != nil {
-					log.Error("Filed shutdown AMQP")
+					log.Error("Failed shutdown AMQP")
 				}
 			}
 		}
