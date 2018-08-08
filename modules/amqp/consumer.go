@@ -1,9 +1,11 @@
 package amqp
 
 import (
+	"errors"
 	"github.com/batazor/go-logger/utils"
 	"github.com/streadway/amqp"
 	"strings"
+	"time"
 )
 
 func NewConsumer(uri, changes, exchangeType, queueName, bindingKey, consumerTag string, packetCh chan []byte) *Consumer {
@@ -26,15 +28,22 @@ func (c *Consumer) Connect() error {
 	var err error
 
 	c.conn, err = amqp.Dial(c.uri)
-	utils.FailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		return errors.New("Failed to connect to RabbitMQ: " + err.Error())
+	}
 
 	go func() {
-		err := <-c.conn.NotifyClose(make(chan *amqp.Error))
-		utils.FailOnError(err, "Notify close:")
+		// Waits here for the channel to be closed
+		log.Info("Notify close: ", <-c.conn.NotifyClose(make(chan *amqp.Error)))
+
+		// Let Handle know it's not time to reconnect
+		c.done <- errors.New("Channel Closed")
 	}()
 
 	c.channel, err = c.conn.Channel()
-	utils.FailOnError(err, "Failed to open a channel")
+	if err != nil {
+		return errors.New("Failed to open a channel: " + err.Error())
+	}
 
 	exchangeList := strings.Split(c.changes, ",")
 	for _, echangeName := range exchangeList {
@@ -48,61 +57,122 @@ func (c *Consumer) Connect() error {
 			false,
 			nil,
 		)
-		utils.FailOnError(err, "Failed to declare the Exchange")
+		if err != nil {
+			return errors.New("Failed to declare the Exchange: " + err.Error())
+		}
 	}
-
-	queue, err := c.channel.QueueDeclare(
-		c.queueName,
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	utils.FailOnError(err, "Failed to declare a queue")
-
-	for _, echangeName := range exchangeList {
-		name := strings.Trim(echangeName, " ")
-		err = c.channel.QueueBind(
-			queue.Name,
-			c.bindingKey,
-			name,
-			false,
-			nil,
-		)
-		utils.FailOnError(err, "Failed to bind a queue")
-	}
-
-	deliveries, err := c.channel.Consume(
-		queue.Name,
-		c.consumerTag,
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	utils.FailOnError(err, "Failed to register a consumer")
-
-	go handle(deliveries, c.done, c.packetCh)
 
 	return nil
 }
 
-func handle(deliveries <-chan amqp.Delivery, done chan error, packetCh chan []byte) {
-	threads := utils.MaxParallelism()
-
-	for i := 0; i < threads; i++ {
-		go func() {
-			for d := range deliveries {
-				packetCh <- d.Body
-				d.Ack(false)
-			}
-		}()
+// AnnounceQueue sets the queue that will be listened to for this
+// connection...
+func (c *Consumer) AnnounceQueue() (<-chan amqp.Delivery, error) {
+	queue, err := c.channel.QueueDeclare(
+		c.queueName, // name of the queue
+		false,       // durable
+		false,       // delete when usused
+		false,       // exclusive
+		false,       // noWait
+		nil,         // arguments
+	)
+	if err != nil {
+		return nil, errors.New("Failed to declare a queue: " + err.Error())
 	}
 
-	log.Info("handle: deliveries channel closed")
-	done <- nil
+	// Qos determines the amount of messages that the queue will pass to you before
+	// it waits for you to ack them. This will slow down queue consumption but
+	// give you more certainty that all messages are being processed. As load increases
+	// I would reccomend upping the about of Threads and Processors the go process
+	// uses before changing this although you will eventually need to reach some
+	// balance between threads, procs, and Qos.
+	err = c.channel.Qos(50, 0, false)
+	if err != nil {
+		return nil, errors.New("Error setting qos: " + err.Error())
+	}
+
+	exchangeList := strings.Split(c.changes, ",")
+	for _, echangeName := range exchangeList {
+		name := strings.Trim(echangeName, " ")
+		err = c.channel.QueueBind(
+			queue.Name,   // name of the queue
+			c.bindingKey, // bindingKey
+			name,         // sourceExchange
+			false,        // noWait
+			nil,          // arguments
+		)
+		if err != nil {
+			return nil, errors.New("Failed to bind a queue: " + err.Error())
+		}
+	}
+
+	deliveries, err := c.channel.Consume(
+		queue.Name,    // name
+		c.consumerTag, // consumerTag,
+		false,         // noAck
+		false,         // exclusive
+		false,         // noLocal
+		false,         // noWait
+		nil,           // arguments
+	)
+	if err != nil {
+		return nil, errors.New("Failed to register a consumer: " + err.Error())
+	}
+
+	return deliveries, nil
+}
+
+// ReConnect is called in places where NotifyClose() channel is called
+// wait 30 seconds before trying to reconnect. Any shorter amount of time
+// will  likely destroy the error log while waiting for servers to come
+// back online. This requires two parameters which is just to satisfy
+// the AccounceQueue call and allows greater flexability
+func (c *Consumer) ReConnect() (<-chan amqp.Delivery, error) {
+	time.Sleep(30 * time.Second)
+
+	if err := c.Connect(); err != nil {
+		return nil, errors.New("Could not connect in reconnect call: " + err.Error())
+	}
+
+	deliveries, err := c.AnnounceQueue()
+	if err != nil {
+		return deliveries, errors.New("Couldn't connect")
+	}
+
+	return deliveries, nil
+}
+
+// Handle has all the logic to make sure your program keeps running
+// d should be a delievey channel as created when you call AnnounceQueue
+// fn should be a function that handles the processing of deliveries
+// this should be the last thing called in main as code under it will
+// become unreachable unless put int a goroutine. The q and rk params
+// are redundent but allow you to have multiple queue listeners in main
+// without them you would be tied into only using one queue per connection
+func (c *Consumer) Handle(
+	deliveries <-chan amqp.Delivery,
+	fn func(<-chan amqp.Delivery)) {
+
+	threads := utils.MaxParallelism()
+
+	for {
+		for i := 0; i < threads; i++ {
+			go fn(deliveries)
+		}
+
+		// Go into reconnect loop when
+		// c.done is passed non nil values
+		if <-c.done != nil {
+			_, err := c.ReConnect()
+			if err != nil {
+				// Very likely chance of failing
+				// should not cause worker to terminate
+				log.Error("Reconnecting Error", err)
+			}
+
+			log.Info("Reconnected... possibly")
+		}
+	}
 }
 
 func (c *Consumer) Shutdown() error {

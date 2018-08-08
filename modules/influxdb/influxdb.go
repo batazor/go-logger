@@ -35,7 +35,9 @@ func Connect(packetCh chan []byte) {
 		Username: DB_USERNAME,
 		Password: DB_PASSWORD,
 	})
-	utils.FailOnError(err, "Error create a new HTTPClient")
+	if err != nil {
+		log.Warn("Error create a new HTTPClient: ", err)
+	}
 	defer CLIENT.Close()
 
 	go func() {
@@ -46,14 +48,18 @@ func Connect(packetCh chan []byte) {
 				log.Info("JSON: ", string(packet))
 				fields := map[string]interface{}{}
 				err := json.Unmarshal(packet, &fields)
-				utils.FailOnError(err, "Error parse packet")
+				if err != nil {
+					log.Warn("Error parse packet: ", err)
+				}
 
 				// Create a new point batch
 				bp, err := client.NewBatchPoints(client.BatchPointsConfig{
 					Database:  DB_NAME,
 					Precision: "s",
 				})
-				utils.FailOnError(err, "Error create a new point batch")
+				if err != nil {
+					log.Warn("Error create a new point batch: ", err)
+				}
 
 				// Create a point and add to batch
 				tags := map[string]string{"telemetry": "raw"}
