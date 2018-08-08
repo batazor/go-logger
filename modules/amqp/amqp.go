@@ -50,8 +50,8 @@ func init() {
 
 func Listen(packetCh chan []byte) {
 	CONSUMER = NewConsumer(AMQP_API, AMQP_EXCHANGE_LIST, AMQP_EXCHANGE_TYPE, AMQP_NAME_QUEUE, AMQP_BINDING_KEY, AMQP_CONSUMER_TAG, packetCh)
-	err := CONSUMER.Connect()
-	if err != nil {
+
+	if err := CONSUMER.Connect(); err != nil {
 		log.Warn(err)
 	}
 
