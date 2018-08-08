@@ -23,7 +23,4 @@ type Consumer struct {
 	changes      string // exchange that we will bind to
 	exchangeType string // topic, direct, etc...
 	bindingKey   string // routing key that we are using
-
-	//lastRecoverTime int64
-	//currentStatus   atomic.Value // track service current status
 }
