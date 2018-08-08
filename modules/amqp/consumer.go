@@ -1,103 +1,25 @@
 package amqp
 
 import (
-	"errors"
 	"github.com/batazor/go-logger/utils"
 	"github.com/streadway/amqp"
 	"strings"
 )
 
-func NewConsumer(uri, changes, exchangeType, queuName, key, ctag string, packetCh chan []byte) (Consumer, error) {
-	var err error
-
-	AMQP := &Consumer{
+func NewConsumer(uri, changes, exchangeType, queueName, bindingKey, consumerTag string, packetCh chan []byte) *Consumer {
+	return &Consumer{
 		uri:          uri,
 		changes:      changes,
+		bindingKey:   bindingKey,
 		exchangeType: exchangeType,
+		queueName:    queueName,
 		conn:         nil,
 		channel:      nil,
-		tag:          ctag,
+		consumerTag:  consumerTag,
 		done:         make(chan error),
+		packetCh:     packetCh,
 	}
 
-	AMQP.conn, err = amqp.Dial(uri)
-	utils.FailOnError(err, "Failed to connect to RabbitMQ")
-
-	go func() {
-		err := <-AMQP.conn.NotifyClose(make(chan *amqp.Error))
-		utils.FailOnError(err, "Notify close:")
-	}()
-
-	AMQP.channel, err = AMQP.conn.Channel()
-	utils.FailOnError(err, "Failed to open a channel")
-
-	exchangeList := strings.Split(changes, ",")
-	for _, echangeName := range exchangeList {
-		name := strings.Trim(echangeName, " ")
-		err = AMQP.channel.ExchangeDeclare(
-			name,
-			exchangeType,
-			false,
-			false,
-			false,
-			false,
-			nil,
-		)
-		utils.FailOnError(err, "Failed to declare the Exchange")
-	}
-
-	queue, err := AMQP.channel.QueueDeclare(
-		queuName,
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	utils.FailOnError(err, "Failed to declare a queue")
-
-	for _, echangeName := range exchangeList {
-		name := strings.Trim(echangeName, " ")
-		err = AMQP.channel.QueueBind(
-			queue.Name,
-			key,
-			name,
-			false,
-			nil,
-		)
-		utils.FailOnError(err, "Failed to bind a queue")
-	}
-
-	deliveries, err := AMQP.channel.Consume(
-		queue.Name,
-		AMQP.tag,
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	utils.FailOnError(err, "Failed to register a consumer")
-
-	go handle(deliveries, AMQP.done, packetCh)
-
-	return *AMQP, nil
-}
-
-func handle(deliveries <-chan amqp.Delivery, done chan error, packetCh chan []byte) {
-	threads := utils.MaxParallelism()
-
-	for i := 0; i < threads; i++ {
-		go func() {
-			for d := range deliveries {
-				packetCh <- d.Body
-				d.Ack(false)
-			}
-		}()
-	}
-
-	log.Info("handle: deliveries channel closed")
-	done <- nil
 }
 
 func (c *Consumer) Connect() error {
@@ -105,20 +27,14 @@ func (c *Consumer) Connect() error {
 
 	c.conn, err = amqp.Dial(c.uri)
 	utils.FailOnError(err, "Failed to connect to RabbitMQ")
-	//defer AMQP.conn.Close()
 
 	go func() {
-		// Waits here for the channel to be closed
 		err := <-c.conn.NotifyClose(make(chan *amqp.Error))
 		utils.FailOnError(err, "Notify close:")
-
-		// Let Handle know it's not time to reconnect
-		c.done <- errors.New("Channel Closed")
 	}()
 
 	c.channel, err = c.conn.Channel()
 	utils.FailOnError(err, "Failed to open a channel")
-	//defer AMQP.channel.Close()
 
 	exchangeList := strings.Split(c.changes, ",")
 	for _, echangeName := range exchangeList {
@@ -135,7 +51,58 @@ func (c *Consumer) Connect() error {
 		utils.FailOnError(err, "Failed to declare the Exchange")
 	}
 
+	queue, err := c.channel.QueueDeclare(
+		c.queueName,
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	utils.FailOnError(err, "Failed to declare a queue")
+
+	for _, echangeName := range exchangeList {
+		name := strings.Trim(echangeName, " ")
+		err = c.channel.QueueBind(
+			queue.Name,
+			c.bindingKey,
+			name,
+			false,
+			nil,
+		)
+		utils.FailOnError(err, "Failed to bind a queue")
+	}
+
+	deliveries, err := c.channel.Consume(
+		queue.Name,
+		c.consumerTag,
+		false,
+		false,
+		false,
+		false,
+		nil,
+	)
+	utils.FailOnError(err, "Failed to register a consumer")
+
+	go handle(deliveries, c.done, c.packetCh)
+
 	return nil
+}
+
+func handle(deliveries <-chan amqp.Delivery, done chan error, packetCh chan []byte) {
+	threads := utils.MaxParallelism()
+
+	for i := 0; i < threads; i++ {
+		go func() {
+			for d := range deliveries {
+				packetCh <- d.Body
+				d.Ack(false)
+			}
+		}()
+	}
+
+	log.Info("handle: deliveries channel closed")
+	done <- nil
 }
 
 func (c *Consumer) Shutdown() error {

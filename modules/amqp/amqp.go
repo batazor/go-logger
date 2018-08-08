@@ -20,7 +20,7 @@ var (
 
 	gracefulStop = make(chan os.Signal)
 
-	CONSUMER = Consumer{}
+	CONSUMER = &Consumer{}
 )
 
 func init() {
@@ -48,5 +48,8 @@ func init() {
 }
 
 func Listen(packetCh chan []byte) {
-	CONSUMER, _ = NewConsumer(AMQP_API, AMQP_EXCHANGE_LIST, AMQP_EXCHANGE_TYPE, AMQP_NAME_QUEUE, AMQP_BINDING_KEY, AMQP_CONSUMER_TAG, packetCh)
+	CONSUMER = NewConsumer(AMQP_API, AMQP_EXCHANGE_LIST, AMQP_EXCHANGE_TYPE, AMQP_NAME_QUEUE, AMQP_BINDING_KEY, AMQP_CONSUMER_TAG, packetCh)
+	if err := CONSUMER.Connect(); err != nil {
+		log.Error("Error: ", err)
+	}
 }
