@@ -56,7 +56,7 @@
     fi
   except:
   - branches
-  when: manual
+  when: on_success
 
 .job_template_publish: &job_publish
   type: publish
