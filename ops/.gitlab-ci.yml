@@ -40,6 +40,7 @@
         --set deployment.image.tag=$CI_COMMIT_TAG
         --set deployment.env.AMQP_API=$AMQP_API
         --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST
+        --set influxdb.nodeSelector=$INFLUXDB_NODE_SELECT
         $HELM_PATH;
     else
       helm --kube-context $HELM_CONTEXT upgrade $CI_PROJECT_NAME $HELM_PATH
@@ -47,7 +48,8 @@
         --set deployment.image.repository=$CI_REGISTRY_IMAGE
         --set deployment.image.tag=$CI_COMMIT_TAG
         --set deployment.env.AMQP_API=$AMQP_API
-        --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST;
+        --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST
+        --set influxdb.nodeSelector=$INFLUXDB_NODE_SELECT;
     fi
   except:
   - branches
