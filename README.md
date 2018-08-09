@@ -43,6 +43,7 @@ $ docker-compose up
 + Support
   + Kubernetes (Helm chart)
   + Prometheus metrics
+    + Grafana dashboard (https://grafana.com/dashboards/240)
   + GitLab CI
 
 #### Grafana
