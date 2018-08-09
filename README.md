@@ -34,6 +34,8 @@ $ docker-compose up
 
 ### Feature
 
++ Support JSON data
+    + Convert nested JSON to flat JSON
 + Support transports
     + AMQP (RabbitMQ)
 + Grafana dashboard
