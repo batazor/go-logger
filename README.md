@@ -25,7 +25,7 @@ $ docker-compose up
 | AMQP_API              | amqp://telemetry:telemetry@localhost:5672/ |
 | AMQP_NAME_QUEUE       | go-logger-packets                          |
 | AMQP_EXCHANGE_LIST    | "demo1, demo2"                             |
-| AMQP_EXCHANGE_TYPE    | "headers"                                   |
+| AMQP_EXCHANGE_TYPE    | "headers"                                  |
 | DB_URL                | "http://influxdb:8086"                     |
 | DB_NAME               | "telemetry"                                |
 | DB_USERNAME           | "telemetry"                                |
@@ -38,9 +38,12 @@ $ docker-compose up
 + Support JSON data
     + Convert nested JSON to flat JSON
 + Support transports
-    + AMQP (RabbitMQ)
+    + AMQP (RabbitMQ) (Input data)
 + Grafana dashboard
-+ Prometheus metrics
++ Support
+  + Kubernetes (Helm chart)
+  + Prometheus metrics
+  + GitLab CI
 
 #### Grafana
 
@@ -65,6 +68,28 @@ Prometheus metrics `localhost:9090/metrics`
 Prometheus metrics:
 - Basic metrics
 </details>
+
+#### GitLAb CI
+
+This project support GitLab CI
+
+<details><summary>CLICK ME</summary>
+<p>
+
+| Name                  | Description                                |
+|-----------------------|--------------------------------------------|
+| DOCKER_PASS           | --                                         |
+| DOCKER_USER           | --                                         |
+| GITHUB_PASSWORD       | --                                         |
+| GITHUB_REPOSITORY_URL | --                                         |
+| GITHUB_USER           | --                                         |
+| HELM_CONTEXT          | --                                         |
+| PROJECT_NAMESPACE     | --                                         |
+| INFLUXDB_NODE_SELECT  | --                                         |
+
+</p>
+</details>
+
 
 ### Benchmark
 
