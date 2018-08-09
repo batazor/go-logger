@@ -17,8 +17,6 @@ var (
 	DB_USERNAME = utils.Getenv("DB_USERNAME", "telemetry")
 	DB_PASSWORD = utils.Getenv("DB_PASSWORD", "telemetry")
 	DB_ID       = utils.Getenv("DB_ID", "_oid")
-
-	CLIENT client.Client
 )
 
 func init() {
@@ -29,17 +27,25 @@ func init() {
 	log.Formatter = new(logrus.JSONFormatter)
 }
 
-func Connect(packetCh chan []byte) {
-	// Create a new HTTPClient
-	CLIENT, err := client.NewHTTPClient(client.HTTPConfig{
+// Create a new HTTPClient
+func influxDBClient() (client.Client, error) {
+	c, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr:     DB_URL,
 		Username: DB_USERNAME,
 		Password: DB_PASSWORD,
 	})
 	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
+func Connect(packetCh chan []byte) {
+	c, err := influxDBClient()
+	if err != nil {
 		log.Warn("Error create a new HTTPClient: ", err)
 	}
-	defer CLIENT.Close()
 
 	go func() {
 		for {
@@ -72,13 +78,13 @@ func Connect(packetCh chan []byte) {
 
 				pt, err := client.NewPoint(fields[DB_ID].(string), tags, fields, time.Now())
 				if err != nil {
-					log.Fatal(err)
+					log.Error("Error create new point: ", err)
 				}
 				bp.AddPoint(pt)
 
 				// Write the batch
-				if err := CLIENT.Write(bp); err != nil {
-					log.Fatal(err)
+				if err := c.Write(bp); err != nil {
+					log.Error("Error write new point: ", err)
 				}
 			}
 		}
