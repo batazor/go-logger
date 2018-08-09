@@ -34,8 +34,6 @@
   # GET LABEL/VALUE FROM $INFLUXDB_NODE_SELECT (a.e "influxdb:true")
   - export INFLUXDB_NODE_SELECT_LABEL="${INFLUXDB_NODE_SELECT%:*}"
   - export INFLUXDB_NODE_SELECT_VALUE="${INFLUXDB_NODE_SELECT#*:}"
-  - echo $INFLUXDB_NODE_SELECT_LABEL
-  - echo $INFLUXDB_NODE_SELECT_VALUE
   - export DEPLOYS=$(helm --kube-context $HELM_CONTEXT ls | grep $CI_PROJECT_NAME | wc -l)
   - if [ ${DEPLOYS}  -eq 0 ]; then
       helm --kube-context $HELM_CONTEXT install
