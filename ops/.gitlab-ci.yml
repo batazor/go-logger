@@ -33,7 +33,7 @@
   script:
   # GET LABEL/VALUE FROM $INFLUXDB_NODE_SELECT (a.e "influxdb:true")
   - export INFLUXDB_NODE_SELECT_LABEL="${INFLUXDB_NODE_SELECT%:*}"
-  - export INFLUXDB_NODE_SELECT_VALUE="${INFLUXDB_NODE_SELECT#*:}"
+  - export INFLUXDB_NODE_SELECT_VALUE=\""${INFLUXDB_NODE_SELECT#*:}"\"
   - export DEPLOYS=$(helm --kube-context $HELM_CONTEXT ls | grep $CI_PROJECT_NAME | wc -l)
   - if [ ${DEPLOYS}  -eq 0 ]; then
       helm --kube-context $HELM_CONTEXT install
@@ -43,7 +43,7 @@
         --set deployment.image.tag=$CI_COMMIT_TAG
         --set deployment.env.AMQP_API=$AMQP_API
         --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST
-        --set influxdb.nodeSelector.$INFLUXDB_NODE_SELECT_LABEL="$INFLUXDB_NODE_SELECT_VALUE"
+        --set influxdb.nodeSelector.$INFLUXDB_NODE_SELECT_LABEL=$INFLUXDB_NODE_SELECT_VALUE
         $HELM_PATH;
     else
       helm --kube-context $HELM_CONTEXT upgrade $CI_PROJECT_NAME $HELM_PATH
@@ -52,7 +52,7 @@
         --set deployment.image.tag=$CI_COMMIT_TAG
         --set deployment.env.AMQP_API=$AMQP_API
         --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST
-        --set influxdb.nodeSelector.$INFLUXDB_NODE_SELECT_LABEL="$INFLUXDB_NODE_SELECT_VALUE";
+        --set influxdb.nodeSelector.$INFLUXDB_NODE_SELECT_LABEL=$INFLUXDB_NODE_SELECT_VALUE;
     fi
   except:
   - branches
