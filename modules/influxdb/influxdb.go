@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/batazor/go-logger/utils"
 	"github.com/influxdata/influxdb/client/v2"
+	"github.com/jeremywohl/flatten"
 	"github.com/sirupsen/logrus"
 	"time"
 )
@@ -45,9 +46,14 @@ func Connect(packetCh chan []byte) {
 			select {
 			case packet := <-packetCh:
 				// Parse
-				log.Info("JSON: ", string(packet))
+				// Nested JSON to flat JSON
+				flat, err := flatten.FlattenString(string(packet), "", 0)
+				if err != nil {
+					log.Warn("Error convert nested JSON to flat JSON: ", err)
+				}
+
 				fields := map[string]interface{}{}
-				err := json.Unmarshal(packet, &fields)
+				err = json.Unmarshal([]byte(flat), &fields)
 				if err != nil {
 					log.Warn("Error parse packet: ", err)
 				}

@@ -33,6 +33,12 @@
   version = "v1.6.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/jeremywohl/flatten"
+  packages = ["."]
+  revision = "6ba45bff2452eaa49edd7c045593bcbc6c6514cb"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
@@ -136,6 +142,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "62e11c7478345eb678f33f62cd9ed2c06132624b9c1a6ebf4ae50aef77e27acc"
+  inputs-digest = "04012a6e0e1b71744669a41b8b581d11f7190311a90ae939908c7d6c98a72730"
   solver-name = "gps-cdcl"
   solver-version = 1

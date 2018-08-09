@@ -3,13 +3,13 @@
 // Copyright 2017 The Go Authors.  All rights reserved.
 // https://github.com/golang/protobuf
 //
-// Loggertribution and use in source and binary forms, with or without
+// Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
 // met:
 //
-//     * Loggertributions of source code must retain the above copyright
+//     * Redistributions of source code must retain the above copyright
 // notice, this list of conditions and the following disclaimer.
-//     * Loggertributions in binary form must reproduce the above
+//     * Redistributions in binary form must reproduce the above
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
