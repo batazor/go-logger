@@ -2,6 +2,19 @@
 
 Writes telemetry to TSDB
 
+### Feature
+
++ Support JSON data
+    + Convert nested JSON to flat JSON
++ Support transports
+    + AMQP (RabbitMQ) (Input data)
++ Grafana dashboard
++ Support
+  + Kubernetes (Helm chart)
+  + Prometheus metrics
+    + Grafana dashboard (https://grafana.com/dashboards/240)
+  + GitLab CI
+
 ### Getting start
 
 <details><summary>CLICK ME</summary>
@@ -32,19 +45,6 @@ $ docker-compose up
 | DB_PASSWORD           | "telemetry"                                |
 | DB_ID                 | "_oid"                                     |
 | PROMETHEUS_ENABLED    | "true"                                     |
-
-### Feature
-
-+ Support JSON data
-    + Convert nested JSON to flat JSON
-+ Support transports
-    + AMQP (RabbitMQ) (Input data)
-+ Grafana dashboard
-+ Support
-  + Kubernetes (Helm chart)
-  + Prometheus metrics
-    + Grafana dashboard (https://grafana.com/dashboards/240)
-  + GitLab CI
 
 #### Grafana
 
