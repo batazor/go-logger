@@ -31,6 +31,7 @@ $ docker-compose up
 | DB_USERNAME           | "telemetry"                                |
 | DB_PASSWORD           | "telemetry"                                |
 | DB_ID                 | "_oid"                                     |
+| PROMETHEUS_ENABLED    | "true"                                     |
 
 ### Feature
 
@@ -39,11 +40,11 @@ $ docker-compose up
 + Support transports
     + AMQP (RabbitMQ)
 + Grafana dashboard
++ Prometheus metrics
 
 #### Grafana
 
-<details><summary>CLICK ME</summary>
-<p>
+<details><summary>CLICK ME</summary></details>
 
 ##### Grafana dashboard example
 
@@ -53,6 +54,16 @@ $ docker-compose up
 - Group by ID object
 
 </p>
+</details>
+
+#### Prometheus
+
+<details><summary>CLICK ME</summary>
+
+Prometheus metrics `localhost:9090/metrics`
+
+Prometheus metrics:
+- Basic metrics
 </details>
 
 ### Benchmark

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/batazor/go-logger/modules/amqp"
 	"github.com/batazor/go-logger/modules/influxdb"
+	"github.com/batazor/go-logger/modules/metrics"
 	"github.com/batazor/go-logger/modules/telemetry"
 	"github.com/batazor/go-logger/utils"
 	"github.com/sirupsen/logrus"
@@ -15,10 +16,11 @@ import (
 var (
 	log = logrus.New()
 
-	packetCh    = make(chan []byte)
-	AMQP_ENABLE = utils.Getenv("AMQP_ENABLE", "true")
-	GRPC_ENABLE = utils.Getenv("GRPC_ENABLE", "true")
-	GRPC_PORT   = utils.Getenv("GRPC_PORT", "50051")
+	packetCh          = make(chan []byte)
+	AMQP_ENABLE       = utils.Getenv("AMQP_ENABLE", "true")
+	PROMETHEUS_ENABLE = utils.Getenv("PROMETHEUS_ENABLE", "true")
+	GRPC_ENABLE       = utils.Getenv("GRPC_ENABLE", "true")
+	GRPC_PORT         = utils.Getenv("GRPC_PORT", "50051")
 )
 
 type server struct{}
@@ -42,6 +44,11 @@ func main() {
 	// Run AMQP
 	if AMQP_ENABLE == "true" {
 		go amqp.Listen(packetCh)
+	}
+
+	// Run AMQP
+	if PROMETHEUS_ENABLE == "true" {
+		go metrics.Listen()
 	}
 
 	// Run gRPC

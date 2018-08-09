@@ -54,6 +54,7 @@ func Listen(packetCh chan []byte) {
 	if err := CONSUMER.Connect(); err != nil {
 		log.Warn(err)
 	}
+	log.Info("Run AMQP")
 
 	deliveries, err := CONSUMER.AnnounceQueue(AMQP_NAME_QUEUE)
 	if err != nil {

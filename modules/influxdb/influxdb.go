@@ -46,6 +46,7 @@ func Connect(packetCh chan []byte) {
 	if err != nil {
 		log.Warn("Error create a new HTTPClient: ", err)
 	}
+	log.Info("Run InfluxDB")
 
 	go func() {
 		for {
