@@ -5,8 +5,8 @@ services:
   rabbitmq:
     image: rabbitmq:3.7-management-alpine
     environment:
-      RABBITMQ_DEFAULT_USER: telemetry
-      RABBITMQ_DEFAULT_PASS: telemetry
+      RABBITMQ_DEFAULT_USER: pb
+      RABBITMQ_DEFAULT_PASS: pb
     ports:
     - "5672:5672"
     - "15672:15672"
@@ -19,11 +19,11 @@ services:
     - "8086:8086"
     environment:
       INFLUXDB_ADMIN_ENABLED: "true"
-      INFLUXDB_DB: telemetry
+      INFLUXDB_DB: pb
       INFLUXDB_ADMIN_USER: admin
       INFLUXDB_ADMIN_PASSWORD: admin
-      INFLUXDB_USER: telemetry
-      INFLUXDB_USER_PASSWORD: telemetry
+      INFLUXDB_USER: pb
+      INFLUXDB_USER_PASSWORD: pb
       INFLUXDB_DATA_ENGINE: tsm1
       INFLUXDB_REPORTING_DISABLED: "false"
     volumes:

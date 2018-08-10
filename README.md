@@ -21,6 +21,11 @@ Writes telemetry to TSDB
 <p>
 
 ```
+# Generate gRPC code
+go get -u github.com/golang/protobuf/proto
+protoc -I pb pb/telemetry.proto \
+    --go_out=plugins=grpc:pb
+
 # Run services
 $ docker-compose up
 ```

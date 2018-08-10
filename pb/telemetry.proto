@@ -3,6 +3,8 @@ package telemetry;
 
 service Telemetry {
   rpc SendPacket (PacketRequest) returns (PacketResponse) {}
+  rpc GetPacket (PacketRequest) returns (DataResponse) {
+  }
 }
 
 message PacketRequest {
@@ -11,4 +13,8 @@ message PacketRequest {
 
 message PacketResponse {
   bool success = 1;
+}
+
+message DataResponse {
+  string Packet = 1;
 }

@@ -11,7 +11,7 @@ import (
 var (
 	log = logrus.New()
 
-	AMQP_API           = utils.Getenv("AMQP_API", "amqp://telemetry:telemetry@localhost:5672/")
+	AMQP_API           = utils.Getenv("AMQP_API", "amqp://pb:pb@localhost:5672/")
 	AMQP_NAME_QUEUE    = utils.Getenv("AMQP_NAME_QUEUE", "go-logger-packets")
 	AMQP_EXCHANGE_LIST = utils.Getenv("AMQP_EXCHANGE_LIST", "demo1, demo2")
 
