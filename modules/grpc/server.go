@@ -34,7 +34,7 @@ func Listen() {
 	log.Info("Run gRPC on port " + port)
 
 	s := grpc.NewServer()
-	pb.RegisterTelemetryServer(s, &server{})
+	telemetry.RegisterTelemetryServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to server: %v", err)
 	}

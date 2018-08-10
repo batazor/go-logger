@@ -2,9 +2,11 @@ syntax = "proto3";
 package telemetry;
 
 service Telemetry {
-  rpc SendPacket (PacketRequest) returns (PacketResponse) {}
-  rpc GetPacket (PacketRequest) returns (DataResponse) {
-  }
+    rpc SendPacket (PacketRequest) returns (PacketResponse) {}
+    rpc GetPacket (PacketRequest) returns (DataResponse) {
+    }
+    rpc Delete (PacketRequest) returns (PacketResponse) {
+    }
 }
 
 message PacketRequest {
