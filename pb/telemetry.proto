@@ -1,5 +1,5 @@
 syntax = "proto3";
-package pb;
+package telemetry;
 
 service Telemetry {
   rpc SendPacket (PacketRequest) returns (PacketResponse) {}

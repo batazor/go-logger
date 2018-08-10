@@ -42,6 +42,6 @@ func main() {
 
 	// Run gRPC
 	if GRPC_ENABLE == "true" {
-		go grpc.Listen()
+		grpc.Listen()
 	}
 }

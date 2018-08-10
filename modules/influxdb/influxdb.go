@@ -13,9 +13,9 @@ var (
 	log = logrus.New()
 
 	DB_URL      = utils.Getenv("DB_URL", "http://localhost:8086")
-	DB_NAME     = utils.Getenv("DB_NAME", "pb")
-	DB_USERNAME = utils.Getenv("DB_USERNAME", "pb")
-	DB_PASSWORD = utils.Getenv("DB_PASSWORD", "pb")
+	DB_NAME     = utils.Getenv("DB_NAME", "telemetry")
+	DB_USERNAME = utils.Getenv("DB_USERNAME", "telemetry")
+	DB_PASSWORD = utils.Getenv("DB_PASSWORD", "telemetry")
 	DB_ID       = utils.Getenv("DB_ID", "_oid")
 )
 
