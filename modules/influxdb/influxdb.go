@@ -46,7 +46,7 @@ func influxDBClient() (client.Client, error) {
 	return c, nil
 }
 
-func Connect(packetCh chan []byte) {
+func Connect(packetCh chan []byte) interface{} {
 	s := server{}
 	s.client, err = influxDBClient()
 	if err != nil {
@@ -75,6 +75,8 @@ func Connect(packetCh chan []byte) {
 			}
 		}
 	}()
+
+	return s
 }
 
 func (s server) Query(DataBase string) map[string]string {

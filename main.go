@@ -27,8 +27,12 @@ func init() {
 }
 
 func main() {
+	var db interface{}
+
 	// Run InfluxDB
-	go influxdb.Connect(packetCh)
+	go func() {
+		db = influxdb.Connect(packetCh)
+	}()
 
 	// Run AMQP
 	if AMQP_ENABLE == "true" {
