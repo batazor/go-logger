@@ -20,6 +20,6 @@ func init() {
 
 func Listen() {
 	http.Handle("/metrics", promhttp.Handler())
-	log.Info("Run prometheus")
+	log.Info("Run Prometheus")
 	logrus.Error(http.ListenAndServe(":9090", nil))
 }

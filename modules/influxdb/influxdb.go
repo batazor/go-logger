@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	err error
 	log = logrus.New()
 
 	DB_URL      = utils.Getenv("DB_URL", "http://localhost:8086")
@@ -18,6 +19,10 @@ var (
 	DB_PASSWORD = utils.Getenv("DB_PASSWORD", "telemetry")
 	DB_ID       = utils.Getenv("DB_ID", "_oid")
 )
+
+type server struct {
+	client client.Client
+}
 
 func init() {
 	// Logging =================================================================
@@ -42,7 +47,8 @@ func influxDBClient() (client.Client, error) {
 }
 
 func Connect(packetCh chan []byte) {
-	c, err := influxDBClient()
+	s := server{}
+	s.client, err = influxDBClient()
 	if err != nil {
 		log.Warn("Error create a new HTTPClient: ", err)
 	}
@@ -65,37 +71,60 @@ func Connect(packetCh chan []byte) {
 					log.Warn("Error parse packet: ", err)
 				}
 
-				// Create a new point batch
-				bp, err := client.NewBatchPoints(client.BatchPointsConfig{
-					Database:  DB_NAME,
-					Precision: "s",
-				})
-				if err != nil {
-					log.Warn("Error create a new point batch: ", err)
-				}
-
-				// Create a point and add to batch
-				tags := map[string]string{"pb": "raw"}
-
-				pt, err := client.NewPoint(fields[DB_ID].(string), tags, fields, time.Now())
-				if err != nil {
-					log.Error("Error create new point: ", err)
-				}
-				bp.AddPoint(pt)
-
-				// Write the batch
-				if err := c.Write(bp); err != nil {
-					log.Error("Error write new point: ", err)
-				}
+				s.Insert(fields)
 			}
 		}
 	}()
+}
 
-	//defer func() {
-	//	if r := recover(); r != nil {
-	//		log.Warn("Problem in InfluxDB", r)
-	//
-	//		go wait()
-	//	}
-	//}()
+func (s server) Query(DataBase string) map[string]string {
+	q := client.Query{
+		Command:  "SELECT LAST(*) from " + DataBase,
+		Database: DB_NAME,
+	}
+
+	response, err := s.client.Query(q)
+	if err != nil {
+		log.Info("Eroor: ", err)
+		return nil
+	}
+
+	if response.Error() != nil {
+		log.Info("Response error: ", response.Error())
+		return nil
+	}
+
+	result := response.Results[0]
+	if result.Err != "" {
+		log.Info("Serie error: ", result.Err)
+		return nil
+	}
+
+	serie := result.Series[0]
+	return serie.Tags
+}
+
+func (s server) Insert(fields map[string]interface{}) {
+	// Create a new point batch
+	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
+		Database:  DB_NAME,
+		Precision: "s",
+	})
+	if err != nil {
+		log.Warn("Error create a new point batch: ", err)
+	}
+
+	// Create a point and add to batch
+	tags := map[string]string{"telemetry": "raw"}
+
+	pt, err := client.NewPoint(fields[DB_ID].(string), tags, fields, time.Now())
+	if err != nil {
+		log.Error("Error create new point: ", err)
+	}
+	bp.AddPoint(pt)
+
+	// Write the batch
+	if err := s.client.Write(bp); err != nil {
+		log.Error("Error write new point: ", err)
+	}
 }

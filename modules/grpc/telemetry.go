@@ -6,6 +6,7 @@ import (
 )
 
 func (s *server) GetPacket(ctx context.Context, in *pb.PacketRequest) (*pb.DataResponse, error) {
+
 	return &pb.DataResponse{
 		Packet: "",
 	}, nil
