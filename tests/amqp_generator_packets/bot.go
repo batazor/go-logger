@@ -2,7 +2,7 @@ package main
 
 import (
 	json2 "encoding/json"
-	"github.com/batazor/go-logger/tests/bot/amqp"
+	"github.com/batazor/go-logger/tests/amqp_generator_packets/amqp"
 	"github.com/bxcodec/faker"
 	"time"
 )

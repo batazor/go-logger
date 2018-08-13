@@ -129,7 +129,7 @@ chart:
   - cd charts
   - git add .
   - git config --global user.email "authmicroservice@gmail.com"
-  - git config --global user.name "CI bot"
+  - git config --global user.name "CI amqp_generator_packets"
   - git commit -m "Add/Update chart $CI_PROJECT_NAME:$CI_COMMIT_TAG"
   - git push
 
