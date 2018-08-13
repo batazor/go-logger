@@ -59,7 +59,7 @@ deployment:
     AMQP_NAME_QUEUE: go-logger-packets
     AMQP_EXCHANGE_LIST: "demo1, demo2"
     DB_URL: http://go-logger-influxdb:8086
-    DB_NAME: pb
+    DB_NAME: telemetry
     DB_USERNAME: pb
     DB_PASSWORD: pb
     DB_ID: _oid
