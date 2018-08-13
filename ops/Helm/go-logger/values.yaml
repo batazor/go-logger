@@ -55,13 +55,13 @@ deployment:
     GRPC_ENABLE: "true"
     GRPC_PORT: "50051"
     AMQP_ENABLE: "true"
-    AMQP_API: amqp://pb:pb@localhost:5672/
+    AMQP_API: amqp://telemetry:telemetry@localhost:5672/
     AMQP_NAME_QUEUE: go-logger-packets
     AMQP_EXCHANGE_LIST: "demo1, demo2"
     DB_URL: http://go-logger-influxdb:8086
     DB_NAME: telemetry
-    DB_USERNAME: pb
-    DB_PASSWORD: pb
+    DB_USERNAME: telemetry
+    DB_PASSWORD: telemetry
     DB_ID: _oid
 
   ## Configure resource requests and limits
@@ -203,15 +203,15 @@ influxdb:
   - name: INFLUXDB_ADMIN_ENABLED
     value: "true"
   - name: INFLUXDB_DB
-    value: "pb"
+    value: "telemetry"
   - name: INFLUXDB_ADMIN_USER
     value: "admin"
   - name: INFLUXDB_ADMIN_PASSWORD
     value: "admin"
   - name: INFLUXDB_USER
-    value: "pb"
+    value: "telemetry"
   - name: INFLUXDB_USER_PASSWORD
-    value: "pb"
+    value: "telemetry"
   - name: INFLUXDB_DATA_ENGINE
     value: "tsm1"
   - name: INFLUXDB_REPORTING_DISABLED
