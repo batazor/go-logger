@@ -11,12 +11,10 @@ import (
 var (
 	log = logrus.New()
 
-	AMQP_API           = utils.Getenv("AMQP_API", "amqp://pb:pb@localhost:5672/")
+	AMQP_API           = utils.Getenv("AMQP_API", "amqp://telemetry:telemetry@localhost:5672/")
 	AMQP_NAME_QUEUE    = utils.Getenv("AMQP_NAME_QUEUE", "go-logger-packets")
 	AMQP_EXCHANGE_LIST = utils.Getenv("AMQP_EXCHANGE_LIST", "demo1, demo2")
-
-	AMQP_CH amqp.Channel
-	AMQP_Q  amqp.Queue
+	AMQP_EXCHANGE_TYPE = utils.Getenv("AMQP_EXCHANGE_TYPE", "headers")
 )
 
 func init() {
@@ -29,11 +27,15 @@ func init() {
 
 func Publish(message []byte) error {
 	AMQP_CONN, err := amqp.Dial(AMQP_API)
-	utils.FailOnError(err, "Failed to connect to RabbitMQ")
+	if err != nil {
+		log.Info("Failed to connect to RabbitMQ", err)
+	}
 	defer AMQP_CONN.Close()
 
 	AMQP_CH, err := AMQP_CONN.Channel()
-	utils.FailOnError(err, "Failed to open a channel")
+	if err != nil {
+		log.Info("Failed to open a channel", err)
+	}
 	defer AMQP_CH.Close()
 
 	exchangeList := strings.Split(AMQP_EXCHANGE_LIST, ",")
@@ -41,14 +43,16 @@ func Publish(message []byte) error {
 		name := strings.Trim(echangeName, " ")
 		err = AMQP_CH.ExchangeDeclare(
 			name,
-			"headers",
+			AMQP_EXCHANGE_TYPE,
 			false,
 			false,
 			false,
 			false,
 			nil,
 		)
-		utils.FailOnError(err, "Failed to declare the Exchange")
+		if err != nil {
+			log.Info("Failed to declare the Exchange", err)
+		}
 	}
 
 	AMQP_Q, err := AMQP_CH.QueueDeclare(
@@ -59,7 +63,9 @@ func Publish(message []byte) error {
 		false,
 		nil,
 	)
-	utils.FailOnError(err, "Failed to declare a queue")
+	if err != nil {
+		log.Info("Failed to declare a queue", err)
+	}
 
 	for _, echangeName := range exchangeList {
 		name := strings.Trim(echangeName, " ")
@@ -71,7 +77,9 @@ func Publish(message []byte) error {
 			false,
 			nil,
 		)
-		utils.FailOnError(err, "Failed to bind a queue")
+		if err != nil {
+			log.Info("Failed to bind a queue", err)
+		}
 
 		err = AMQP_CH.Publish(
 			"",
@@ -85,7 +93,9 @@ func Publish(message []byte) error {
 				Timestamp:    time.Now(),
 			},
 		)
-		utils.FailOnError(err, "Failed to bind a queue")
+		if err != nil {
+			log.Info("Failed to bind a queue", err)
+		}
 	}
 
 	return nil
