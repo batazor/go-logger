@@ -6,6 +6,13 @@ import (
 )
 
 func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.DataResponse, error) {
+	s.apiDBRequest <- Request{
+		Data: in.Packet,
+		Response: func(name string) {
+			log.Info("RESPONSE: ", name)
+		},
+	}
+
 	return &telemetry.DataResponse{
 		Packet: "",
 	}, nil

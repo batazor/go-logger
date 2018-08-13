@@ -4,7 +4,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-// Consumer holds all infromation
+// Consumer holds all information
 // about the RabbitMQ connection
 // This setup does limit a consumer
 // to one exchange. This should not be

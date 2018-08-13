@@ -83,7 +83,7 @@ func (c *Consumer) AnnounceQueue(queueName string) (<-chan amqp.Delivery, error)
 	// Qos determines the amount of messages that the queue will pass to you before
 	// it waits for you to ack them. This will slow down queue consumption but
 	// give you more certainty that all messages are being processed. As load increases
-	// I would reccomend upping the about of Threads and Processors the go process
+	// I would recommend upping the about of Threads and Processors the go process
 	// uses before changing this although you will eventually need to reach some
 	// balance between threads, procs, and Qos.
 	err = c.channel.Qos(50, 0, false)
@@ -147,7 +147,7 @@ func (c *Consumer) ReConnect(queueName string) (<-chan amqp.Delivery, error) {
 // fn should be a function that handles the processing of deliveries
 // this should be the last thing called in main as code under it will
 // become unreachable unless put int a goroutine. The q and rk params
-// are redundent but allow you to have multiple queue listeners in main
+// are redundant but allow you to have multiple queue listeners in main
 // without them you would be tied into only using one queue per connection
 func (c *Consumer) Handle(
 	deliveries <-chan amqp.Delivery,

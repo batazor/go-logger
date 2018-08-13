@@ -2,6 +2,8 @@
 
 Writes telemetry to TSDB
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/batazor/go-logger)](https://goreportcard.com/report/github.com/batazor/go-logger)
+
 ### Feature
 
 + Support JSON data

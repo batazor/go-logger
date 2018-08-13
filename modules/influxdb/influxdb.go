@@ -2,6 +2,7 @@ package influxdb
 
 import (
 	"encoding/json"
+	"github.com/batazor/go-logger/modules/grpc"
 	"github.com/batazor/go-logger/utils"
 	"github.com/influxdata/influxdb/client/v2"
 	"github.com/jeremywohl/flatten"
@@ -46,7 +47,7 @@ func influxDBClient() (client.Client, error) {
 	return c, nil
 }
 
-func Connect(packetCh chan []byte) interface{} {
+func Connect(packetCh chan []byte, apiDBRequest chan grpc.Request) interface{} {
 	s := server{}
 	s.client, err = influxDBClient()
 	if err != nil {
@@ -72,6 +73,8 @@ func Connect(packetCh chan []byte) interface{} {
 				}
 
 				s.Insert(fields)
+			case request := <-apiDBRequest:
+				request.Response = s.Query(request.Data)
 			}
 		}
 	}()

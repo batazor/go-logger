@@ -18,6 +18,7 @@ func init() {
 	log.Formatter = new(logrus.JSONFormatter)
 }
 
+// Run prometheus exporter
 func Listen() {
 	http.Handle("/metrics", promhttp.Handler())
 	log.Info("Run Prometheus")

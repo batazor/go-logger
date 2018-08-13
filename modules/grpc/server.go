@@ -14,8 +14,6 @@ var (
 	GRPC_PORT = utils.Getenv("GRPC_PORT", "50051")
 )
 
-type server struct{}
-
 func init() {
 	// Logging =================================================================
 	// Setup the logger backend using Sirupsen/logrus and configure
@@ -24,7 +22,7 @@ func init() {
 	log.Formatter = new(logrus.JSONFormatter)
 }
 
-func Listen() {
+func Listen(apiDBRequest chan Request) {
 	port := fmt.Sprintf(":%s", GRPC_PORT)
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
@@ -34,7 +32,9 @@ func Listen() {
 	log.Info("Run gRPC on port " + port)
 
 	s := grpc.NewServer()
-	telemetry.RegisterTelemetryServer(s, &server{})
+	telemetry.RegisterTelemetryServer(s, &server{
+		apiDBRequest: apiDBRequest,
+	})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to server: %v", err)
 	}
