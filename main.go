@@ -13,7 +13,6 @@ var (
 	log = logrus.New()
 
 	packetCh          = make(chan []byte)
-	apiDBRequest      = make(chan grpc.Request)
 	AMQP_ENABLE       = utils.Getenv("AMQP_ENABLE", "true")
 	PROMETHEUS_ENABLE = utils.Getenv("PROMETHEUS_ENABLE", "true")
 	GRPC_ENABLE       = utils.Getenv("GRPC_ENABLE", "true")
@@ -28,11 +27,9 @@ func init() {
 }
 
 func main() {
-	var db interface{}
-
 	// Run InfluxDB
 	go func() {
-		db = influxdb.Connect(packetCh, apiDBRequest)
+		influxdb.Connect(packetCh)
 	}()
 
 	// Run AMQP
@@ -47,6 +44,6 @@ func main() {
 
 	// Run gRPC
 	if GRPC_ENABLE == "true" {
-		grpc.Listen(apiDBRequest)
+		grpc.Listen()
 	}
 }

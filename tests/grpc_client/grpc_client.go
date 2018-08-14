@@ -1,12 +1,12 @@
-package grpc
+package main
 
 import (
 	"fmt"
 	"github.com/batazor/go-logger/pb"
 	"github.com/batazor/go-logger/utils"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	"net"
 )
 
 var (
@@ -22,20 +22,21 @@ func init() {
 	log.Formatter = new(logrus.JSONFormatter)
 }
 
-type server struct{}
-
-func Listen() {
+func main() {
 	port := fmt.Sprintf(":%s", GRPC_PORT)
-	lis, err := net.Listen("tcp", port)
+	conn, err := grpc.Dial(port, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("Open port: ", err)
 	}
+	defer conn.Close()
 
-	log.Info("Run gRPC on port " + port)
-
-	grpcServer := grpc.NewServer()
-	telemetry.RegisterTelemetryServer(grpcServer, &server{})
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to server: %v", err)
+	client := telemetry.NewTelemetryClient(conn)
+	res, err := client.GetPacket(context.Background(), &telemetry.PacketRequest{
+		Packet: "July",
+	})
+	if err != nil {
+		log.Fatal("Error GetPacket: ", err)
 	}
+
+	log.Info("RESULT: ", res.Packet)
 }

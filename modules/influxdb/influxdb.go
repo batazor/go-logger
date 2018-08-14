@@ -2,7 +2,6 @@ package influxdb
 
 import (
 	"encoding/json"
-	"github.com/batazor/go-logger/modules/grpc"
 	"github.com/batazor/go-logger/utils"
 	"github.com/influxdata/influxdb/client/v2"
 	"github.com/jeremywohl/flatten"
@@ -19,11 +18,9 @@ var (
 	DB_USERNAME = utils.Getenv("DB_USERNAME", "telemetry")
 	DB_PASSWORD = utils.Getenv("DB_PASSWORD", "telemetry")
 	DB_ID       = utils.Getenv("DB_ID", "_oid")
-)
 
-type server struct {
-	client client.Client
-}
+	SESSION client.Client
+)
 
 func init() {
 	// Logging =================================================================
@@ -47,9 +44,8 @@ func influxDBClient() (client.Client, error) {
 	return c, nil
 }
 
-func Connect(packetCh chan []byte, apiDBRequest chan grpc.Request) interface{} {
-	s := server{}
-	s.client, err = influxDBClient()
+func Connect(packetCh chan []byte) {
+	SESSION, err = influxDBClient()
 	if err != nil {
 		log.Warn("Error create a new HTTPClient: ", err)
 	}
@@ -72,25 +68,23 @@ func Connect(packetCh chan []byte, apiDBRequest chan grpc.Request) interface{} {
 					log.Warn("Error parse packet: ", err)
 				}
 
-				s.Insert(fields)
-			case request := <-apiDBRequest:
-				request.Response = s.Query(request.Data)
+				Insert(fields)
 			}
 		}
 	}()
-
-	return s
 }
 
-func (s server) Query(DataBase string) map[string]string {
+func Query(DataBase string) map[string]string {
 	q := client.Query{
 		Command:  "SELECT LAST(*) from " + DataBase,
 		Database: DB_NAME,
 	}
 
-	response, err := s.client.Query(q)
+	log.Info("REQUEST: ", q.Command)
+
+	response, err := SESSION.Query(q)
 	if err != nil {
-		log.Info("Eroor: ", err)
+		log.Info("Error: ", err)
 		return nil
 	}
 
@@ -109,7 +103,7 @@ func (s server) Query(DataBase string) map[string]string {
 	return serie.Tags
 }
 
-func (s server) Insert(fields map[string]interface{}) {
+func Insert(fields map[string]interface{}) {
 	// Create a new point batch
 	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
 		Database:  DB_NAME,
@@ -129,7 +123,7 @@ func (s server) Insert(fields map[string]interface{}) {
 	bp.AddPoint(pt)
 
 	// Write the batch
-	if err := s.client.Write(bp); err != nil {
+	if err := SESSION.Write(bp); err != nil {
 		log.Error("Error write new point: ", err)
 	}
 }

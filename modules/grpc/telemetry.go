@@ -2,16 +2,16 @@ package grpc
 
 import (
 	"context"
+	"github.com/batazor/go-logger/modules/influxdb"
 	"github.com/batazor/go-logger/pb"
 )
 
 func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.DataResponse, error) {
-	s.apiDBRequest <- Request{
-		Data: in.Packet,
-		Response: func(name string) {
-			log.Info("RESPONSE: ", name)
-		},
-	}
+	log.Info("in.Packet: ", in.Packet)
+
+	influxdb.Query(in.Packet)
+
+	//log.Info("RESPONSE: ", r)
 
 	return &telemetry.DataResponse{
 		Packet: "",

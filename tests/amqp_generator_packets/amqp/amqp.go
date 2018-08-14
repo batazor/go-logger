@@ -28,13 +28,13 @@ func init() {
 func Publish(message []byte) error {
 	AMQP_CONN, err := amqp.Dial(AMQP_API)
 	if err != nil {
-		log.Info("Failed to connect to RabbitMQ", err)
+		log.Info("Failed to connect to RabbitMQ: ", err)
 	}
 	defer AMQP_CONN.Close()
 
 	AMQP_CH, err := AMQP_CONN.Channel()
 	if err != nil {
-		log.Info("Failed to open a channel", err)
+		log.Info("Failed to open a channel: ", err)
 	}
 	defer AMQP_CH.Close()
 
@@ -51,7 +51,7 @@ func Publish(message []byte) error {
 			nil,
 		)
 		if err != nil {
-			log.Info("Failed to declare the Exchange", err)
+			log.Info("Failed to declare the Exchange: ", err)
 		}
 	}
 
@@ -64,7 +64,7 @@ func Publish(message []byte) error {
 		nil,
 	)
 	if err != nil {
-		log.Info("Failed to declare a queue", err)
+		log.Info("Failed to declare a queue: ", err)
 	}
 
 	for _, echangeName := range exchangeList {
@@ -78,7 +78,7 @@ func Publish(message []byte) error {
 			nil,
 		)
 		if err != nil {
-			log.Info("Failed to bind a queue", err)
+			log.Info("Failed to bind a queue: ", err)
 		}
 
 		err = AMQP_CH.Publish(
@@ -94,7 +94,7 @@ func Publish(message []byte) error {
 			},
 		)
 		if err != nil {
-			log.Info("Failed to bind a queue", err)
+			log.Info("Failed to bind a queue: ", err)
 		}
 	}
 
