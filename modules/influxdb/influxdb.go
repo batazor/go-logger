@@ -74,9 +74,9 @@ func Connect(packetCh chan []byte) {
 	}()
 }
 
-func Query(DataBase string) map[string]string {
+func Query(DataBase string) []byte {
 	q := client.Query{
-		Command:  "SELECT LAST(*) from " + DataBase,
+		Command:  `SELECT LAST("year") from "telemetry"."autogen"."` + DataBase + `"`,
 		Database: DB_NAME,
 	}
 
@@ -99,8 +99,15 @@ func Query(DataBase string) map[string]string {
 		return nil
 	}
 
-	serie := result.Series[0]
-	return serie.Tags
+	// GO struct to JSON schema
+	b, err := json.Marshal(result.Series)
+	if err != nil {
+		log.Error("JSON marshal error: ", result.Err)
+	}
+
+	log.Info("RES: ", string(b))
+
+	return b
 }
 
 func Insert(fields map[string]interface{}) {

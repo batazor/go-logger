@@ -9,12 +9,10 @@ import (
 func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.DataResponse, error) {
 	log.Info("in.Packet: ", in.Packet)
 
-	influxdb.Query(in.Packet)
-
-	//log.Info("RESPONSE: ", r)
+	r := influxdb.Query(in.Packet)
 
 	return &telemetry.DataResponse{
-		Packet: "",
+		Packet: string(r),
 	}, nil
 }
 

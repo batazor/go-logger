@@ -10,13 +10,13 @@ service Telemetry {
 }
 
 message PacketRequest {
-  string Packet = 1;
+    string Packet = 1;
 }
 
 message PacketResponse {
-  bool success = 1;
+    bool success = 1;
 }
 
 message DataResponse {
-  string Packet = 1;
+    string Packet = 1;
 }
