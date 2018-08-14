@@ -216,6 +216,12 @@ influxdb:
     value: "tsm1"
   - name: INFLUXDB_REPORTING_DISABLED
     value: "true"
+  - name: JAEGER_SERVICE_NAME
+    value: "go-logger"
+  - name: JAEGER_AGENT_HOST_PORT
+    value: "jaeger-agent:6831"
+  - name: JAEGER_RPC_METRICS
+    value: "true"
 
   ## Change InfluxDB configuration parameters below:
   ## Defaults are indicated

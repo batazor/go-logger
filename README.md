@@ -1,8 +1,6 @@
 # go-logger
 
-Writes telemetry to TSDB
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/batazor/go-logger)](https://goreportcard.com/report/github.com/batazor/go-logger)
+Writes telemetry to TSDB [![GoDoc][doc-img]][doc] [![Go Report Card]([report-url])]([report-url]) [![OpenTracing 1.0 Enabled][ot-img]][ot-url]
 
 ### Feature
 
@@ -10,7 +8,10 @@ Writes telemetry to TSDB
     + Convert nested JSON to flat JSON
 + Support transports
     + AMQP (RabbitMQ) (Input data)
++ API
+  + gRPC
 + Grafana dashboard
++ Opentracing
 + Support
   + Kubernetes (Helm chart)
   + Prometheus metrics
@@ -36,21 +37,25 @@ $ docker-compose up
 
 ### ENV
 
-| Name                  | Default value                              |
-|-----------------------|--------------------------------------------|
-| GRPC_ENABLE           | true                                       |
-| GRPC_PORT             | "50051"                                    |
-| AMQP_ENABLE           | true                                       |
-| AMQP_API              | amqp://telemetry:telemetry@localhost:5672/ |
-| AMQP_NAME_QUEUE       | go-logger-packets                          |
-| AMQP_EXCHANGE_LIST    | "demo1, demo2"                             |
-| AMQP_EXCHANGE_TYPE    | "headers"                                  |
-| DB_URL                | "http://influxdb:8086"                     |
-| DB_NAME               | "telemetry"                                |
-| DB_USERNAME           | "telemetry"                                |
-| DB_PASSWORD           | "telemetry"                                |
-| DB_ID                 | "_oid"                                     |
-| PROMETHEUS_ENABLED    | "true"                                     |
+| Name                             | Default value                              |
+|----------------------------------|--------------------------------------------|
+| GRPC_ENABLE                      | true                                       |
+| GRPC_PORT                        | "50051"                                    |
+| AMQP_ENABLE                      | true                                       |
+| AMQP_API                         | amqp://telemetry:telemetry@localhost:5672/ |
+| AMQP_NAME_QUEUE                  | go-logger-packets                          |
+| AMQP_EXCHANGE_LIST               | "demo1, demo2"                             |
+| AMQP_EXCHANGE_TYPE               | "headers"                                  |
+| DB_URL                           | "http://influxdb:8086"                     |
+| DB_NAME                          | "telemetry"                                |
+| DB_USERNAME                      | "telemetry"                                |
+| DB_PASSWORD                      | "telemetry"                                |
+| DB_ID                            | "_oid"                                     |
+| PROMETHEUS_ENABLED               | "true"                                     |
+| OPENTRACING_ENABLED              | "true"                                     |
+| JAEGER_SERVICE_NAME              | go-logger                                  |
+| JAEGER_AGENT_HOST_PORT           | "localhost:5778"                           |
+| JAEGER_RPC_METRICS               | "true"                                     |
 
 #### Grafana
 
@@ -113,3 +118,8 @@ Run `go run /tests/bot/bot.go`
 
 </p>
 </details>
+
+[doc-img]: https://godoc.org/github.com/batazor/go-logger?status.svg
+[doc]: https://godoc.org/github.com/batazor/go-logger
+[report-url]: https://goreportcard.com/badge/github.com/batazor/go-logger
+[jaeger-env-url]: https://github.com/jaegertracing/jaeger-client-go#environment-variables
