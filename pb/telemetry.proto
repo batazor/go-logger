@@ -5,8 +5,6 @@ service Telemetry {
     rpc SendPacket (PacketRequest) returns (PacketResponse) {}
     rpc GetPacket (PacketRequest) returns (DataResponse) {
     }
-    rpc Delete (PacketRequest) returns (PacketResponse) {
-    }
 }
 
 message PacketRequest {
@@ -18,5 +16,5 @@ message PacketResponse {
 }
 
 message DataResponse {
-    string Packet = 1;
+    bytes Packet = 1;
 }

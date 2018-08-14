@@ -12,7 +12,7 @@ func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*t
 	r := influxdb.Query(in.Packet)
 
 	return &telemetry.DataResponse{
-		Packet: string(r),
+		Packet: r,
 	}, nil
 }
 
