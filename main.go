@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"github.com/batazor/go-logger/modules/amqp"
 	"github.com/batazor/go-logger/modules/grpc"
 	"github.com/batazor/go-logger/modules/influxdb"
 	"github.com/batazor/go-logger/modules/jaeger"
 	"github.com/batazor/go-logger/modules/metrics"
 	"github.com/batazor/go-logger/utils"
+	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -31,13 +33,19 @@ func init() {
 	// configure the backend at github.com/Sirupsen/logrus
 	log.Formatter = new(logrus.JSONFormatter)
 
+	// Global context
+	ctx := context.Background()
+
 	// OpenTracing =============================================================
 	if OPENTRACING_ENABLED == "true" {
 		tracer, closer := jaeger.Listen()
+		opentracing.SetGlobalTracer(tracer)
 		defer closer.Close()
 
+		// Add event
 		span := tracer.StartSpan("say-hello")
-		span.Finish()
+		ctx = opentracing.ContextWithSpan(ctx, span)
+		jaeger.Add(ctx)
 	}
 }
 
