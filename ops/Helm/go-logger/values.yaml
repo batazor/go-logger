@@ -193,10 +193,8 @@ chronograf:
 kapacitor:
   service:
     type: NodePort
-
   envVars:
     KAPACITOR_INFLUXDB_0_URLS_0: http://go-logger-influxdb:8086
-  influxURL: http://go-logger-influxdb:8086
 
 influxdb:
   ## influxdb image version
