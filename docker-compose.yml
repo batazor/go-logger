@@ -40,6 +40,16 @@ services:
     volumes:
     - /data/influxdb/data:/var/lib/influxdb
 
+  kapacitor:
+    image: kapacitor:1.5-alpine
+    environment:
+      KAPACITOR_HOSTNAME: kapacitor
+      KAPACITOR_INFLUXDB_0_URLS_0: http://influxdb:8086
+    ports:
+    - "9092:9092"
+    volumes:
+    - /data/go-logger/kapacitor:/var/lib/kapacitor
+
   chronograf:
     image: chronograf:alpine
     volumes:
