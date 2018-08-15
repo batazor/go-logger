@@ -1,6 +1,6 @@
 name: go-logger
 description: Save telemtery to TSDB
-version: 0.1.1
+version: 0.1.2
 keywords:
 - tsdb
 - logger
