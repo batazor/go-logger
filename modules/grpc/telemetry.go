@@ -17,5 +17,9 @@ func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*t
 }
 
 func (s *server) SendPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.PacketResponse, error) {
-	return &telemetry.PacketResponse{Success: true}, nil
+	log.Info("in.Packet: ", in.Packet)
+
+	r := influxdb.InsertJSON(in.Packet)
+
+	return &telemetry.PacketResponse{Success: r}, nil
 }

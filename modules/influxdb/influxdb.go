@@ -55,20 +55,7 @@ func Connect(packetCh chan []byte) {
 		for {
 			select {
 			case packet := <-packetCh:
-				// Parse
-				// Nested JSON to flat JSON
-				flat, err := flatten.FlattenString(string(packet), "", 0)
-				if err != nil {
-					log.Warn("Error convert nested JSON to flat JSON: ", err)
-				}
-
-				fields := map[string]interface{}{}
-				err = json.Unmarshal([]byte(flat), &fields)
-				if err != nil {
-					log.Warn("Error parse packet: ", err)
-				}
-
-				Insert(fields)
+				InsertJSON(string(packet))
 			}
 		}
 	}()
@@ -133,4 +120,23 @@ func Insert(fields map[string]interface{}) {
 	if err := SESSION.Write(bp); err != nil {
 		log.Error("Error write new point: ", err)
 	}
+}
+
+func InsertJSON(packet string) bool {
+	// Parse
+	// Nested JSON to flat JSON
+	flat, err := flatten.FlattenString(string(packet), "", 0)
+	if err != nil {
+		log.Warn("Error convert nested JSON to flat JSON: ", err)
+	}
+
+	fields := map[string]interface{}{}
+	err = json.Unmarshal([]byte(flat), &fields)
+	if err != nil {
+		log.Warn("Error parse packet: ", err)
+	}
+
+	Insert(fields)
+
+	return true
 }
