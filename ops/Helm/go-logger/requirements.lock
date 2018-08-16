@@ -5,8 +5,5 @@ dependencies:
 - name: chronograf
   repository: https://kubernetes-charts.storage.googleapis.com/
   version: 0.4.5
-- name: kapacitor
-  repository: https://kubernetes-charts.storage.googleapis.com/
-  version: 0.5.1
-digest: sha256:d2b7852a666436c0adc5465119c35f14b24088b87c0ae247a89e16d355aabc70
-generated: 2018-08-15T17:49:26.060874289+03:00
+digest: sha256:b5f093ca63996db298f853ae0b56046ab8f491aecec0b1e0a781558dca1644df
+generated: 2018-08-16T18:18:36.468832017+03:00
