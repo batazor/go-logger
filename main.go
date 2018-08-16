@@ -56,15 +56,15 @@ func main() {
 		go amqp.Listen()
 	}
 
+	// Run gRPC
+	if GRPC_ENABLE == "true" {
+		go grpc.Listen()
+	}
+
 	// Run Prometheus
 	if PROMETHEUS_ENABLE == "true" {
 		go metrics.Listen()
 		go healthcheck.Listen()
-	}
-
-	// Run gRPC
-	if GRPC_ENABLE == "true" {
-		go grpc.Listen()
 	}
 
 	// Wait forever

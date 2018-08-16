@@ -25,9 +25,10 @@ func init() {
 // Run prometheus exporter
 func Listen() {
 	log.Info("Run HealthCheck")
+	time.Sleep(time.Second * 5)
 
 	// Our app is not happy if we've got more than 100 goroutines running.
-	Health.AddLivenessCheck("goroutine-threshold", healthcheck.GoroutineCountCheck(100))
+	Health.AddLivenessCheck("goroutine-threshold", healthcheck.GoroutineCountCheck(300))
 
 	// Our app is not ready if we can't resolve our upstream dependency in DNS.
 	Health.AddReadinessCheck(
