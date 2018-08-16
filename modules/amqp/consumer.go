@@ -9,7 +9,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-func NewConsumer(uri, changes, exchangeType, queueName, bindingKey, consumerTag string, packetCh chan []byte) *Consumer {
+func NewConsumer(uri, changes, exchangeType, queueName, bindingKey, consumerTag string) *Consumer {
 	return &Consumer{
 		uri:          uri,
 		changes:      changes,
@@ -19,7 +19,6 @@ func NewConsumer(uri, changes, exchangeType, queueName, bindingKey, consumerTag 
 		channel:      nil,
 		consumerTag:  consumerTag,
 		done:         make(chan error),
-		packetCh:     packetCh,
 	}
 
 }

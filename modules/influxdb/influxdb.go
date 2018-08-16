@@ -20,6 +20,9 @@ var (
 	DB_ID       = utils.Getenv("DB_ID", "_oid")
 
 	SESSION client.Client
+
+	// Channel
+	PacketCh = make(chan []byte)
 )
 
 func init() {
@@ -44,7 +47,7 @@ func influxDBClient() (client.Client, error) {
 	return c, nil
 }
 
-func Connect(packetCh chan []byte) {
+func Connect() {
 	SESSION, err = influxDBClient()
 	if err != nil {
 		log.Warn("Error create a new HTTPClient: ", err)
@@ -54,7 +57,7 @@ func Connect(packetCh chan []byte) {
 	go func() {
 		for {
 			select {
-			case packet := <-packetCh:
+			case packet := <-PacketCh:
 				InsertJSON(string(packet))
 			}
 		}
@@ -97,7 +100,7 @@ func Query(DataBase string) []byte {
 	return b
 }
 
-func Insert(fields map[string]interface{}) {
+func Insert(fields map[string]interface{}) error {
 	// Create a new point batch
 	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
 		Database:  DB_NAME,
@@ -105,6 +108,7 @@ func Insert(fields map[string]interface{}) {
 	})
 	if err != nil {
 		log.Warn("Error create a new point batch: ", err)
+		return err
 	}
 
 	// Create a point and add to batch
@@ -113,13 +117,17 @@ func Insert(fields map[string]interface{}) {
 	pt, err := client.NewPoint(fields[DB_ID].(string), tags, fields, time.Now())
 	if err != nil {
 		log.Error("Error create new point: ", err)
+		return err
 	}
 	bp.AddPoint(pt)
 
 	// Write the batch
 	if err := SESSION.Write(bp); err != nil {
 		log.Error("Error write new point: ", err)
+		return err
 	}
+
+	return nil
 }
 
 func InsertJSON(packet string) bool {
@@ -136,7 +144,9 @@ func InsertJSON(packet string) bool {
 		log.Warn("Error parse packet: ", err)
 	}
 
-	Insert(fields)
+	if err = Insert(fields); err != nil {
+		return false
+	}
 
 	return true
 }

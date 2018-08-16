@@ -16,9 +16,6 @@ var (
 	// Logging
 	log = logrus.New()
 
-	// Channel
-	packetCh = make(chan []byte)
-
 	// ENV
 	AMQP_ENABLE         = utils.Getenv("AMQP_ENABLE", "true")
 	PROMETHEUS_ENABLE   = utils.Getenv("PROMETHEUS_ENABLE", "true")
@@ -51,22 +48,23 @@ func init() {
 
 func main() {
 	// Run InfluxDB
-	go func() {
-		influxdb.Connect(packetCh)
-	}()
+	go influxdb.Connect()
 
 	// Run AMQP
 	if AMQP_ENABLE == "true" {
-		go amqp.Listen(packetCh)
+		go amqp.Listen()
 	}
 
-	// Run AMQP
+	// Run Prometheus
 	if PROMETHEUS_ENABLE == "true" {
 		go metrics.Listen()
 	}
 
 	// Run gRPC
 	if GRPC_ENABLE == "true" {
-		grpc.Listen()
+		go grpc.Listen()
 	}
+
+	// Wait forever
+	select {}
 }

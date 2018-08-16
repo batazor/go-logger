@@ -1,6 +1,7 @@
 package amqp
 
 import (
+	"github.com/batazor/go-logger/modules/influxdb"
 	"github.com/batazor/go-logger/utils"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -48,8 +49,8 @@ func init() {
 	}()
 }
 
-func Listen(packetCh chan []byte) {
-	CONSUMER = NewConsumer(AMQP_API, AMQP_EXCHANGE_LIST, AMQP_EXCHANGE_TYPE, AMQP_NAME_QUEUE, AMQP_BINDING_KEY, AMQP_CONSUMER_TAG, packetCh)
+func Listen() {
+	CONSUMER = NewConsumer(AMQP_API, AMQP_EXCHANGE_LIST, AMQP_EXCHANGE_TYPE, AMQP_NAME_QUEUE, AMQP_BINDING_KEY, AMQP_CONSUMER_TAG)
 
 	if err := CONSUMER.Connect(); err != nil {
 		log.Warn(err)
@@ -61,7 +62,7 @@ func Listen(packetCh chan []byte) {
 		log.Warn(err)
 	}
 
-	CONSUMER.Handle(deliveries, handler, AMQP_NAME_QUEUE, packetCh)
+	CONSUMER.Handle(deliveries, handler, AMQP_NAME_QUEUE, influxdb.PacketCh)
 }
 
 func handler(deliveries <-chan amqp.Delivery, packetCh chan []byte) {

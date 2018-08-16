@@ -35,6 +35,12 @@
   version = "v1.1.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/heptiolabs/healthcheck"
+  packages = ["."]
+  revision = "6ff867650f40c632367411120275478876202233"
+
+[[projects]]
   name = "github.com/influxdata/influxdb"
   packages = [
     "client/v2",
@@ -73,13 +79,13 @@
   version = "v0.8.0"
 
 [[projects]]
+  branch = "master"
   name = "github.com/prometheus/client_golang"
   packages = [
     "prometheus",
     "prometheus/promhttp"
   ]
-  revision = "c5b7fccd204277076155f10851dad72b76a49317"
-  version = "v0.8.0"
+  revision = "5b23715facdef1452016bae512489c3cdf82458c"
 
 [[projects]]
   branch = "master"
@@ -241,6 +247,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "19bb8300ab5cb1c8d0728aaf5beff00b6c67a267d72e703b6bc756979f6e5ce7"
+  inputs-digest = "d2cbb5dc0b74b5a7376822bba01069eca44730e751db3d2ffe5bb5ebb3e3508b"
   solver-name = "gps-cdcl"
   solver-version = 1
