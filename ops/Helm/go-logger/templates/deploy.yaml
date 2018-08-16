@@ -37,10 +37,6 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: {{ .Values.prometheus.exporter.port | quote }}
 {{- end }}
-      labels:
-        app: {{ template "logger.name" . }}
-        release: "{{ .Release.Name }}"
-        chart: {{ template "logger.chart" . }}
     spec:
       serviceAccountName: {{ template "logger.serviceAccountName" . }}
       terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
