@@ -2,7 +2,9 @@ package influxdb
 
 import (
 	"encoding/json"
+	probe "github.com/batazor/go-logger/modules/healthcheck"
 	"github.com/batazor/go-logger/utils"
+	"github.com/heptiolabs/healthcheck"
 	"github.com/influxdata/influxdb/client/v2"
 	"github.com/jeremywohl/flatten"
 	"github.com/sirupsen/logrus"
@@ -53,6 +55,11 @@ func Connect() {
 		log.Warn("Error create a new HTTPClient: ", err)
 	}
 	log.Info("Run InfluxDB")
+
+	// Health check
+	probe.Health.AddReadinessCheck(
+		"influxdb",
+		healthcheck.Timeout(func() error { return err }, time.Second*10))
 
 	go func() {
 		for {

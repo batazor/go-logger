@@ -1,12 +1,15 @@
 package jaeger
 
 import (
+	probe "github.com/batazor/go-logger/modules/healthcheck"
 	"github.com/batazor/go-logger/utils"
+	"github.com/heptiolabs/healthcheck"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
 	"github.com/uber/jaeger-client-go/config"
 	jaegerlog "github.com/uber/jaeger-client-go/log"
 	"io"
+	"time"
 )
 
 var (
@@ -44,6 +47,11 @@ func Listen() (opentracing.Tracer, io.Closer) {
 	if err != nil {
 		log.Errorf("ERROR: cannot init Jaeger: ", err)
 	}
+
+	// Health check
+	probe.Health.AddReadinessCheck(
+		"jaeger",
+		healthcheck.Timeout(func() error { return err }, time.Second*10))
 
 	log.Info("Run OpenTracing")
 

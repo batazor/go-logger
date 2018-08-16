@@ -1,13 +1,16 @@
 package amqp
 
 import (
+	probe "github.com/batazor/go-logger/modules/healthcheck"
 	"github.com/batazor/go-logger/modules/influxdb"
 	"github.com/batazor/go-logger/utils"
+	"github.com/heptiolabs/healthcheck"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 var (
@@ -52,10 +55,16 @@ func init() {
 func Listen() {
 	CONSUMER = NewConsumer(AMQP_API, AMQP_EXCHANGE_LIST, AMQP_EXCHANGE_TYPE, AMQP_NAME_QUEUE, AMQP_BINDING_KEY, AMQP_CONSUMER_TAG)
 
-	if err := CONSUMER.Connect(); err != nil {
+	err := CONSUMER.Connect()
+	if err != nil {
 		log.Warn(err)
 	}
 	log.Info("Run AMQP")
+
+	// Health check
+	probe.Health.AddReadinessCheck(
+		"amqp",
+		healthcheck.Timeout(func() error { return err }, time.Second*10))
 
 	deliveries, err := CONSUMER.AnnounceQueue(AMQP_NAME_QUEUE)
 	if err != nil {

@@ -2,11 +2,14 @@ package grpc
 
 import (
 	"fmt"
+	probe "github.com/batazor/go-logger/modules/healthcheck"
 	"github.com/batazor/go-logger/pb"
 	"github.com/batazor/go-logger/utils"
+	"github.com/heptiolabs/healthcheck"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"net"
+	"time"
 )
 
 var (
@@ -30,6 +33,11 @@ func Listen() {
 	if err != nil {
 		log.Fatal("Open port: ", err)
 	}
+
+	// Health check
+	probe.Health.AddReadinessCheck(
+		"grpc",
+		healthcheck.Timeout(func() error { return err }, time.Second*10))
 
 	log.Info("Run gRPC on port " + port)
 

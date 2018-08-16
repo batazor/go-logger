@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	log = logrus.New()
+	log    = logrus.New()
+	Health healthcheck.Handler
 )
 
 func init() {
@@ -17,23 +18,24 @@ func init() {
 	// it to use a custom JSONFormatter. See the logrus docs for how to
 	// configure the backend at github.com/Sirupsen/logrus
 	log.Formatter = new(logrus.JSONFormatter)
+
+	Health = healthcheck.NewHandler()
 }
 
 // Run prometheus exporter
 func Listen() {
-	health := healthcheck.NewHandler()
 	log.Info("Run HealthCheck")
 
 	// Our app is not happy if we've got more than 100 goroutines running.
-	health.AddLivenessCheck("goroutine-threshold", healthcheck.GoroutineCountCheck(100))
+	Health.AddLivenessCheck("goroutine-threshold", healthcheck.GoroutineCountCheck(100))
 
 	// Our app is not ready if we can't resolve our upstream dependency in DNS.
-	health.AddReadinessCheck(
+	Health.AddReadinessCheck(
 		"upstream-dep-dns",
 		healthcheck.DNSResolveCheck("google.com", 50*time.Millisecond))
 
 	// Our app is not ready if we can't connect to our database (`var db *sql.DB`) in <1s.
 	//health.AddReadinessCheck("database", healthcheck.DatabasePingCheck(db, 1*time.Second))
 
-	go http.ListenAndServe("0.0.0.0:8086", health)
+	go http.ListenAndServe("0.0.0.0:8086", Health)
 }
