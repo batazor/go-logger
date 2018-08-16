@@ -3,6 +3,8 @@ package healthcheck
 import (
 	"github.com/heptiolabs/healthcheck"
 	"github.com/sirupsen/logrus"
+	"net/http"
+	"time"
 )
 
 var (
@@ -20,7 +22,18 @@ func init() {
 // Run prometheus exporter
 func Listen() {
 	health := healthcheck.NewHandler()
+	log.Info("Run HealthCheck")
 
 	// Our app is not happy if we've got more than 100 goroutines running.
 	health.AddLivenessCheck("goroutine-threshold", healthcheck.GoroutineCountCheck(100))
+
+	// Our app is not ready if we can't resolve our upstream dependency in DNS.
+	health.AddReadinessCheck(
+		"upstream-dep-dns",
+		healthcheck.DNSResolveCheck("google.com", 50*time.Millisecond))
+
+	// Our app is not ready if we can't connect to our database (`var db *sql.DB`) in <1s.
+	//health.AddReadinessCheck("database", healthcheck.DatabasePingCheck(db, 1*time.Second))
+
+	go http.ListenAndServe("0.0.0.0:8086", health)
 }

@@ -58,11 +58,17 @@ deployment:
     AMQP_API: amqp://telemetry:telemetry@localhost:5672/
     AMQP_NAME_QUEUE: go-logger-packets
     AMQP_EXCHANGE_LIST: "demo1, demo2"
+    AMQP_EXCHANGE_TYPE: headers
     DB_URL: http://go-logger-influxdb:8086
     DB_NAME: telemetry
     DB_USERNAME: telemetry
     DB_PASSWORD: telemetry
     DB_ID: _oid
+    PROMETHEUS_ENABLED: "true"
+    OPENTRACING_ENABLED: "true"
+    JAEGER_SERVICE_NAME: "go-logger"
+    JAEGER_AGENT_HOST_PORT: "localhost:5778"
+    JAEGER_RPC_METRICS: "true"
 
   ## Configure resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
@@ -78,7 +84,6 @@ deployment:
   ## Configure extra options for liveness and readiness probes
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
   livenessProbe:
-    enabled: false
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
@@ -86,7 +91,6 @@ deployment:
     failureThreshold: 5
 
   readinessProbe:
-    enabled: false
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 1

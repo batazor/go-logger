@@ -14,6 +14,7 @@ Writes telemetry to TSDB [![GoDoc][doc-img]][doc] [![Go Report Card]([report-url
 + Opentracing
 + Support
   + Kubernetes (Helm chart)
+    + Healthcheck implementing Kubernetes liveness and readiness probe
   + Prometheus metrics
     + Grafana dashboard (https://grafana.com/dashboards/240)
   + GitLab CI

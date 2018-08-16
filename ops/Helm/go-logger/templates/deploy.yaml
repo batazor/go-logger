@@ -82,27 +82,27 @@ spec:
         - name: exporter
           protocol: TCP
           containerPort: {{ .Values.prometheus.exporter.port }}
-        {{- if .Values.deployment.livenessProbe.enabled }}
+    {{- if .Values.deployment.env.PROMETHEUS_ENABLED }}
         livenessProbe:
           initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
           successThreshold: {{ .Values.deployment.livenessProbe.successThreshold }}
           failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
-          exec:
-            command:
-            - echo 0
+          httpGet:
+              path: /live
+                port: 8086
         {{- end }}
-        {{- if .Values.deployment.livenessProbe.enabled }}
+          {{- if .Values.deployment.env.PROMETHEUS_ENABLED }}
         readinessProbe:
           initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
           successThreshold: {{ .Values.deployment.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.deployment.readinessProbe.failureThreshold }}
-          exec:
-            command:
-            - echo 0
+          httpGet:
+              path: /ready
+                port: 8086
         {{- end }}
         resources:
 {{ toYaml .Values.deployment.resources | indent 10 }}

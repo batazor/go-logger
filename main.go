@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/batazor/go-logger/modules/amqp"
 	"github.com/batazor/go-logger/modules/grpc"
+	"github.com/batazor/go-logger/modules/healthcheck"
 	"github.com/batazor/go-logger/modules/influxdb"
 	"github.com/batazor/go-logger/modules/jaeger"
 	"github.com/batazor/go-logger/modules/metrics"
@@ -58,6 +59,7 @@ func main() {
 	// Run Prometheus
 	if PROMETHEUS_ENABLE == "true" {
 		go metrics.Listen()
+		go healthcheck.Listen()
 	}
 
 	// Run gRPC
