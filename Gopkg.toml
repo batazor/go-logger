@@ -72,3 +72,7 @@
 [[constraint]]
   name = "github.com/uber/jaeger-client-go"
   version = "2.14.0"
+
+[[constraint]]
+  name = "github.com/grpc-ecosystem/go-grpc-prometheus"
+  version = "1.2.0"

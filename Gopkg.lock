@@ -35,6 +35,12 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/grpc-ecosystem/go-grpc-prometheus"
+  packages = ["."]
+  revision = "c225b8c3b01faf2899099b768856a9e916e5087b"
+  version = "v1.2.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/heptiolabs/healthcheck"
   packages = ["."]
@@ -247,6 +253,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d2cbb5dc0b74b5a7376822bba01069eca44730e751db3d2ffe5bb5ebb3e3508b"
+  inputs-digest = "b6111b56d413c2e4d5dcd4921d0589958d1a08be9389e3a56e88a0d65631f1be"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -5,6 +5,7 @@ import (
 	probe "github.com/batazor/go-logger/modules/healthcheck"
 	"github.com/batazor/go-logger/pb"
 	"github.com/batazor/go-logger/utils"
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/heptiolabs/healthcheck"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -41,8 +42,18 @@ func Listen() {
 
 	log.Info("Run gRPC on port " + port)
 
-	grpcServer := grpc.NewServer()
+	// Initialize gRPC server's interceptor
+	grpcServer := grpc.NewServer(
+		grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
+		grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
+	)
+
+	// Register gRPC service implementations
 	telemetry.RegisterTelemetryServer(grpcServer, &server{})
+
+	// After all your registrations, make sure all of the Prometheus metrics are initialized.
+	grpc_prometheus.Register(grpcServer)
+
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to server: %v", err)
 	}
