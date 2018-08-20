@@ -2,29 +2,10 @@ package influxdb
 
 import (
 	"encoding/json"
-	probe "github.com/batazor/go-logger/modules/healthcheck"
-	"github.com/batazor/go-logger/utils"
-	"github.com/heptiolabs/healthcheck"
 	"github.com/influxdata/influxdb/client/v2"
 	"github.com/jeremywohl/flatten"
 	"github.com/sirupsen/logrus"
 	"time"
-)
-
-var (
-	err error
-	log = logrus.New()
-
-	DB_URL      = utils.Getenv("DB_URL", "http://localhost:8086")
-	DB_NAME     = utils.Getenv("DB_NAME", "telemetry")
-	DB_USERNAME = utils.Getenv("DB_USERNAME", "telemetry")
-	DB_PASSWORD = utils.Getenv("DB_PASSWORD", "telemetry")
-	DB_ID       = utils.Getenv("DB_ID", "_oid")
-
-	SESSION client.Client
-
-	// Channel
-	PacketCh = make(chan []byte)
 )
 
 func init() {
@@ -33,42 +14,6 @@ func init() {
 	// it to use a custom JSONFormatter. See the logrus docs for how to
 	// configure the backend at github.com/Sirupsen/logrus
 	log.Formatter = new(logrus.JSONFormatter)
-}
-
-// Create a new HTTPClient
-func influxDBClient() (client.Client, error) {
-	c, err := client.NewHTTPClient(client.HTTPConfig{
-		Addr:     DB_URL,
-		Username: DB_USERNAME,
-		Password: DB_PASSWORD,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return c, nil
-}
-
-func Connect() {
-	SESSION, err = influxDBClient()
-	if err != nil {
-		log.Warn("Error create a new HTTPClient: ", err)
-	}
-	log.Info("Run InfluxDB")
-
-	// Health check
-	probe.Health.AddReadinessCheck(
-		"influxdb",
-		healthcheck.Timeout(func() error { return err }, time.Second*10))
-
-	go func() {
-		for {
-			select {
-			case packet := <-PacketCh:
-				InsertJSON(string(packet))
-			}
-		}
-	}()
 }
 
 func Query(DataBase string) []byte {
@@ -156,4 +101,35 @@ func InsertJSON(packet string) bool {
 	}
 
 	return true
+}
+
+func GetState(request StateRequest) *client.Response {
+	q := client.Query{
+		Command:  `SELECT ` + request.function + `("` + request.fields + `") FROM "` + DB_NAME + `"."autogen".` + request.measurement,
+		Database: DB_NAME,
+	}
+
+	if request.where != "" {
+		q.Command = q.Command + " WHERE " + request.where
+	}
+
+	log.Info("REQUEST: ", q.Command)
+
+	response, err := SESSION.Query(q)
+	if err != nil {
+		log.Info("Error: ", err)
+		return nil
+	}
+
+	if response.Error() != nil {
+		log.Info("Response error: ", response.Error())
+		return nil
+	}
+
+	if response.Err != "" {
+		log.Info("Serie error: ", response.Err)
+		return nil
+	}
+
+	return response
 }

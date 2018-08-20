@@ -2,8 +2,8 @@ package grpc
 
 import (
 	"context"
-	"github.com/batazor/go-logger/modules/influxdb"
 	"github.com/batazor/go-logger/pb"
+	"github.com/batazor/go-logger/pkg/influxdb"
 )
 
 func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.DataResponse, error) {

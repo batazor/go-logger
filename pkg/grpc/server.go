@@ -2,8 +2,8 @@ package grpc
 
 import (
 	"fmt"
-	probe "github.com/batazor/go-logger/modules/healthcheck"
 	"github.com/batazor/go-logger/pb"
+	probe "github.com/batazor/go-logger/pkg/healthcheck"
 	"github.com/batazor/go-logger/utils"
 	"github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/heptiolabs/healthcheck"

@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/batazor/go-logger/modules/amqp"
-	"github.com/batazor/go-logger/modules/grpc"
-	"github.com/batazor/go-logger/modules/healthcheck"
-	"github.com/batazor/go-logger/modules/influxdb"
-	"github.com/batazor/go-logger/modules/jaeger"
-	"github.com/batazor/go-logger/modules/metrics"
+	"github.com/batazor/go-logger/pkg/amqp"
+	"github.com/batazor/go-logger/pkg/grpc"
+	"github.com/batazor/go-logger/pkg/healthcheck"
+	"github.com/batazor/go-logger/pkg/influxdb"
+	"github.com/batazor/go-logger/pkg/jaeger"
+	"github.com/batazor/go-logger/pkg/metrics"
 	"github.com/batazor/go-logger/utils"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"

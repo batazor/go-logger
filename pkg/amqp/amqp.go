@@ -1,8 +1,8 @@
 package amqp
 
 import (
-	probe "github.com/batazor/go-logger/modules/healthcheck"
-	"github.com/batazor/go-logger/modules/influxdb"
+	probe "github.com/batazor/go-logger/pkg/healthcheck"
+	"github.com/batazor/go-logger/pkg/influxdb"
 	"github.com/batazor/go-logger/utils"
 	"github.com/heptiolabs/healthcheck"
 	"github.com/sirupsen/logrus"

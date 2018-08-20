@@ -1,7 +1,7 @@
 package jaeger
 
 import (
-	probe "github.com/batazor/go-logger/modules/healthcheck"
+	probe "github.com/batazor/go-logger/pkg/healthcheck"
 	"github.com/batazor/go-logger/utils"
 	"github.com/heptiolabs/healthcheck"
 	"github.com/opentracing/opentracing-go"
