@@ -1,6 +1,6 @@
 # go-logger
 
-Writes telemetry to TSDB [![GoDoc][doc-img]][doc] [![Go Report Card]([report-url])]([report-url]) [![OpenTracing 1.0 Enabled][ot-img]][ot-url]
+Writes telemetry to TSDB [![GoDoc][doc-img]][doc] [![OpenTracing Badge](https://img.shields.io/badge/OpenTracing-enabled-blue.svg)](http://opentracing.io)
 
 ### Feature
 
@@ -122,5 +122,3 @@ Run `go run /tests/bot/bot.go`
 
 [doc-img]: https://godoc.org/github.com/batazor/go-logger?status.svg
 [doc]: https://godoc.org/github.com/batazor/go-logger
-[report-url]: https://goreportcard.com/badge/github.com/batazor/go-logger
-[jaeger-env-url]: https://github.com/jaegertracing/jaeger-client-go#environment-variables
