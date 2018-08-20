@@ -42,6 +42,9 @@ func Listen() {
 
 	log.Info("Run gRPC on port " + port)
 
+	// Enable Prometheus histograms
+	grpc_prometheus.EnableHandlingTimeHistogram()
+
 	// Initialize gRPC server's interceptor
 	grpcServer := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
