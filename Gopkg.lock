@@ -121,12 +121,6 @@
   revision = "05ee40e3a273f7245e8777337fc7b46e533a9a92"
 
 [[projects]]
-  name = "github.com/robfig/cron"
-  packages = ["."]
-  revision = "b41be1df696709bb6395fe435af20370037c0b4c"
-  version = "v1.1"
-
-[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
@@ -259,6 +253,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "84166b967f351d8d8e2e316884d820dd24c96f9994f1516bd0c84c21ab7f9444"
+  inputs-digest = "7769420dfe068eb4a12c8fce3bb02bd4c0701636b27f5446bee7043db4b9be74"
   solver-name = "gps-cdcl"
   solver-version = 1

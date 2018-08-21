@@ -5,7 +5,6 @@ import (
 	"github.com/batazor/go-logger/pkg/amqp"
 	"github.com/batazor/go-logger/pkg/grpc"
 	"github.com/batazor/go-logger/pkg/healthcheck"
-	"github.com/batazor/go-logger/pkg/influxdb"
 	"github.com/batazor/go-logger/pkg/jaeger"
 	"github.com/batazor/go-logger/pkg/metrics"
 	"github.com/batazor/go-logger/utils"
@@ -48,9 +47,6 @@ func init() {
 }
 
 func main() {
-	// Run InfluxDB
-	go influxdb.Connect()
-
 	// Run AMQP
 	if AMQP_ENABLE == "true" {
 		go amqp.Listen()

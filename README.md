@@ -10,7 +10,6 @@ Writes telemetry to TSDB [![GoDoc][doc-img]][doc] [![OpenTracing Badge](https://
     + AMQP (RabbitMQ) (Input data)
 + API
   + gRPC
-+ Grafana dashboard
 + Opentracing
 + Support
   + Kubernetes (Helm chart)
@@ -47,11 +46,6 @@ $ docker-compose up
 | AMQP_NAME_QUEUE                  | go-logger-packets                          |
 | AMQP_EXCHANGE_LIST               | "demo1, demo2"                             |
 | AMQP_EXCHANGE_TYPE               | "headers"                                  |
-| DB_URL                           | "http://influxdb:8086"                     |
-| DB_NAME                          | "telemetry"                                |
-| DB_USERNAME                      | "telemetry"                                |
-| DB_PASSWORD                      | "telemetry"                                |
-| DB_ID                            | "_oid"                                     |
 | PROMETHEUS_ENABLED               | "true"                                     |
 | OPENTRACING_ENABLED              | "true"                                     |
 | JAEGER_SERVICE_NAME              | go-logger                                  |
@@ -63,8 +57,6 @@ $ docker-compose up
 <details><summary>CLICK ME</summary></details>
 
 ##### Grafana dashboard example
-
-![Grafana dashboard example](./docs/grafana-example-dashboard.png)
 
 **Support:**
 - Group by ID object
@@ -98,7 +90,6 @@ This project support GitLab CI
 | GITHUB_USER           | --                                         |
 | HELM_CONTEXT          | --                                         |
 | PROJECT_NAMESPACE     | --                                         |
-| INFLUXDB_NODE_SELECT  | --                                         |
 
 </p>
 </details>

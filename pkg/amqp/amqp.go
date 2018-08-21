@@ -2,7 +2,6 @@ package amqp
 
 import (
 	probe "github.com/batazor/go-logger/pkg/healthcheck"
-	"github.com/batazor/go-logger/pkg/influxdb"
 	"github.com/batazor/go-logger/utils"
 	"github.com/heptiolabs/healthcheck"
 	"github.com/sirupsen/logrus"
@@ -66,12 +65,12 @@ func Listen() {
 		"amqp",
 		healthcheck.Timeout(func() error { return err }, time.Second*10))
 
-	deliveries, err := CONSUMER.AnnounceQueue(AMQP_NAME_QUEUE)
-	if err != nil {
-		log.Warn(err)
-	}
+	//deliveries, err := CONSUMER.AnnounceQueue(AMQP_NAME_QUEUE)
+	//if err != nil {
+	//	log.Warn(err)
+	//}
 
-	CONSUMER.Handle(deliveries, handler, AMQP_NAME_QUEUE, influxdb.PacketCh)
+	//CONSUMER.Handle(deliveries, handler, AMQP_NAME_QUEUE, influxdb.PacketCh)
 }
 
 func handler(deliveries <-chan amqp.Delivery, packetCh chan []byte) {
