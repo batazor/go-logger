@@ -2,12 +2,6 @@ package utils
 
 import "github.com/bxcodec/faker"
 
-type State struct {
-	Latitude float32 `faker:"lat" json:"lat"`
-	Long     float32 `faker:"long" json:"lon"`
-	Time     string  `faker:"time" json:"time"`
-}
-
 type Packet struct {
 	Oid       string `faker:"month_name" json:"_oid"`
 	UserName  string `faker:"username" json:"username"`
@@ -19,8 +13,8 @@ type Packet struct {
 	Timestamp string `faker:"timestamp" json:"timestamp"`
 	TimeZone  string `faker:"timezone"  json:"timezone"`
 	IPV4      string `faker:"ipv4" json:"IPv4"`
-	State     State  `json:"state"`
 	Bool      bool
+	Int       int
 }
 
 func GetRandomPacket() (interface{}, error) {

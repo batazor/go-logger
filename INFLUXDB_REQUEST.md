@@ -5,3 +5,8 @@
 # Get count points
 `SELECT count("_oid") FROM "telemetry"."autogen"./^*/`
 `SELECT count("_oid") from "telemetry"."autogen"."/^*/""`
+
+# Get size each DB
+```
+SELECT last("diskBytes") FROM "_internal"."monitor"."shard" GROUP BY "database"
+```

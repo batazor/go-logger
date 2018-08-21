@@ -49,20 +49,18 @@ func main() {
 		case res := <-packetCh:
 			json, _ := json.Marshal(res)
 
-			for i := 0; i < 100; i++ {
-				go func() {
-					res, err := client.SendPacket(context.Background(), &telemetry.PacketRequest{
-						Packet: string(json),
-					})
+			for i := 0; i < 1000; i++ {
+				res, err := client.SendPacket(context.Background(), &telemetry.PacketRequest{
+					Packet: string(json),
+				})
 
-					if err != nil {
-						log.Fatal("Error SendPacket: ", err)
-					}
+				if err != nil {
+					log.Fatal("Error SendPacket: ", err)
+				}
 
-					INDEX += 1
+				INDEX += 1
 
-					log.Info("RESULT ( ", INDEX, " ): ", res.Success)
-				}()
+				log.Info("RESULT ( ", INDEX, " ): ", res.Success)
 			}
 
 			go task()

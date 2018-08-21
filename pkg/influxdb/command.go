@@ -5,6 +5,7 @@ import (
 	"github.com/influxdata/influxdb/client/v2"
 	"github.com/jeremywohl/flatten"
 	"github.com/sirupsen/logrus"
+	"strings"
 	"time"
 )
 
@@ -55,7 +56,7 @@ func Query(DataBase string) []byte {
 func Insert(fields map[string]interface{}) error {
 	// Create a new point batch
 	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
-		Database:  DB_NAME,
+		Database:  fields[DB_ID].(string),
 		Precision: "s",
 	})
 	if err != nil {
@@ -76,6 +77,11 @@ func Insert(fields map[string]interface{}) error {
 	// Write the batch
 	if err := SESSION.Write(bp); err != nil {
 		log.Error("Error write new point: ", err)
+
+		if strings.Contains(err.Error(), "database not found") {
+			CreateDataBase(fields[DB_ID].(string))
+		}
+
 		return err
 	}
 
@@ -111,6 +117,33 @@ func GetState(request StateRequest) *client.Response {
 
 	if request.where != "" {
 		q.Command = q.Command + " WHERE " + request.where
+	}
+
+	log.Info("REQUEST: ", q.Command)
+
+	response, err := SESSION.Query(q)
+	if err != nil {
+		log.Info("Error: ", err)
+		return nil
+	}
+
+	if response.Error() != nil {
+		log.Info("Response error: ", response.Error())
+		return nil
+	}
+
+	if response.Err != "" {
+		log.Info("Serie error: ", response.Err)
+		return nil
+	}
+
+	return response
+}
+
+func CreateDataBase(name string) *client.Response {
+	q := client.Query{
+		Command:  `CREATE DATABASE "` + name + `"`,
+		Database: DB_NAME,
 	}
 
 	log.Info("REQUEST: ", q.Command)

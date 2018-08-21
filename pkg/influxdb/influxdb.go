@@ -57,7 +57,8 @@ func Connect() {
 	// Health check
 	probe.Health.AddReadinessCheck(
 		"influxdb",
-		healthcheck.Timeout(func() error { return err }, time.Second*10))
+		healthcheck.Timeout(func() error { return err }, time.Second*10),
+	)
 
 	go func() {
 		for {
@@ -69,18 +70,18 @@ func Connect() {
 	}()
 
 	// TEST
-	response := getCountPointByMeasurements()
+	response := getSizeDB()
 
 	for _, v := range response.Results[0].Series {
-		r := StateRequest{
-			measurement: `"` + v.Name + `"`,
-			function:    "last",
-			fields:      "*",
-			where:       "time > now() - 7d",
-		}
-		d := GetState(r)
-		log.Info("D: ", d.Results[0].Series)
+		//r := StateRequest{
+		//	measurement: `"` + v.Name + `"`,
+		//	function:    "last",
+		//	fields:      "*",
+		//	where:       "time > now() - 7d",
+		//}
+		//d := GetState(r)
+		//log.Info("D: ", d.Results[0].Series)
 
-		log.Info("T: ", v.Name, " : ", v.Values[0][1])
+		log.Info("T: ", v.Tags["database"], " : ", v.Values[0][1])
 	}
 }

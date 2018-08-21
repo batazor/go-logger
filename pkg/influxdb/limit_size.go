@@ -13,12 +13,29 @@ func init() {
 	log.Formatter = new(logrus.JSONFormatter)
 }
 
-func getCountPointByMeasurements() *client.Response {
-	r := StateRequest{
-		measurement: "/^*/",
-		function:    "count",
-		fields:      DB_ID,
+func getSizeDB() *client.Response {
+	q := client.Query{
+		Command:  `SELECT last("diskBytes") FROM "_internal"."monitor"."shard" GROUP BY "database"`,
+		Database: "_internal",
 	}
 
-	return GetState(r)
+	log.Info("REQUEST: ", q.Command)
+
+	response, err := SESSION.Query(q)
+	if err != nil {
+		log.Info("Error: ", err)
+		return nil
+	}
+
+	if response.Error() != nil {
+		log.Info("Response error: ", response.Error())
+		return nil
+	}
+
+	if response.Err != "" {
+		log.Info("Serie error: ", response.Err)
+		return nil
+	}
+
+	return response
 }
