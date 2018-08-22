@@ -41,11 +41,13 @@ $ docker-compose up
 |----------------------------------|--------------------------------------------|
 | GRPC_ENABLE                      | true                                       |
 | GRPC_PORT                        | "50051"                                    |
+| REDIS_ENABLE                     | true                                       |
 | AMQP_ENABLE                      | true                                       |
 | AMQP_API                         | amqp://telemetry:telemetry@localhost:5672/ |
 | AMQP_NAME_QUEUE                  | go-logger-packets                          |
 | AMQP_EXCHANGE_LIST               | "demo1, demo2"                             |
 | AMQP_EXCHANGE_TYPE               | "headers"                                  |
+| DB_ID                            | "_oid"                                     |
 | PROMETHEUS_ENABLED               | "true"                                     |
 | OPENTRACING_ENABLED              | "true"                                     |
 | JAEGER_SERVICE_NAME              | go-logger                                  |

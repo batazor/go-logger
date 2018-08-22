@@ -2,13 +2,12 @@ package amqp
 
 import (
 	probe "github.com/batazor/go-logger/pkg/healthcheck"
+	"github.com/batazor/go-logger/pkg/redis"
 	"github.com/batazor/go-logger/utils"
 	"github.com/heptiolabs/healthcheck"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
@@ -35,20 +34,20 @@ func init() {
 	log.Formatter = new(logrus.JSONFormatter)
 
 	// Gracefully stop application
-	signal.Notify(gracefulStop, syscall.SIGTERM)
-	signal.Notify(gracefulStop, syscall.SIGINT)
+	//signal.Notify(gracefulStop, syscall.SIGTERM)
+	//signal.Notify(gracefulStop, syscall.SIGINT)
 
-	go func() {
-		for {
-			select {
-			case <-gracefulStop:
-				// Close connect to AMQP
-				if err := CONSUMER.Shutdown(); err != nil {
-					log.Error("Failed shutdown AMQP")
-				}
-			}
-		}
-	}()
+	//go func() {
+	//	for {
+	//		select {
+	//		case <-gracefulStop:
+	//			// Close connect to AMQP
+	//			if err := CONSUMER.Shutdown(); err != nil {
+	//				log.Error("Failed shutdown AMQP")
+	//			}
+	//		}
+	//	}
+	//}()
 }
 
 func Listen() {
@@ -65,12 +64,12 @@ func Listen() {
 		"amqp",
 		healthcheck.Timeout(func() error { return err }, time.Second*10))
 
-	//deliveries, err := CONSUMER.AnnounceQueue(AMQP_NAME_QUEUE)
-	//if err != nil {
-	//	log.Warn(err)
-	//}
+	deliveries, err := CONSUMER.AnnounceQueue(AMQP_NAME_QUEUE)
+	if err != nil {
+		log.Warn(err)
+	}
 
-	//CONSUMER.Handle(deliveries, handler, AMQP_NAME_QUEUE, influxdb.PacketCh)
+	CONSUMER.Handle(deliveries, handler, AMQP_NAME_QUEUE, redis.PacketCh)
 }
 
 func handler(deliveries <-chan amqp.Delivery, packetCh chan []byte) {

@@ -22,7 +22,7 @@ services:
     - "5672:5672"
     - "15672:15672"
 
-  redis-rejson:
-    image: redislabs/rejson:latest
+  redis:
+    image: redis:alpine
     ports:
     - "6379:6379"

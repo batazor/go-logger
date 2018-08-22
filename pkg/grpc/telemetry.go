@@ -6,7 +6,7 @@ import (
 )
 
 func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.DataResponse, error) {
-	//r := influxdb.Query(in.Packet)
+	//r := redis.Insert(in.Packet)
 	//
 	//return &telemetry.DataResponse{
 	//	Packet: r,

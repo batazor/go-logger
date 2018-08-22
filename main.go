@@ -7,6 +7,7 @@ import (
 	"github.com/batazor/go-logger/pkg/healthcheck"
 	"github.com/batazor/go-logger/pkg/jaeger"
 	"github.com/batazor/go-logger/pkg/metrics"
+	"github.com/batazor/go-logger/pkg/redis"
 	"github.com/batazor/go-logger/utils"
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
@@ -17,6 +18,7 @@ var (
 	log = logrus.New()
 
 	// ENV
+	REDIS_ENABLE        = utils.Getenv("REDIS_ENABLE", "true")
 	AMQP_ENABLE         = utils.Getenv("AMQP_ENABLE", "true")
 	PROMETHEUS_ENABLE   = utils.Getenv("PROMETHEUS_ENABLE", "true")
 	GRPC_ENABLE         = utils.Getenv("GRPC_ENABLE", "true")
@@ -47,6 +49,11 @@ func init() {
 }
 
 func main() {
+	// Run REDIS
+	if REDIS_ENABLE == "true" {
+		go redis.Listen()
+	}
+
 	// Run AMQP
 	if AMQP_ENABLE == "true" {
 		go amqp.Listen()
