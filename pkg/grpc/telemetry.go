@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"github.com/batazor/go-logger/pb"
+	"github.com/batazor/go-logger/pkg/redis"
 )
 
 func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.DataResponse, error) {
@@ -15,11 +16,7 @@ func (s *server) GetPacket(ctx context.Context, in *telemetry.PacketRequest) (*t
 }
 
 func (s *server) SendPacket(ctx context.Context, in *telemetry.PacketRequest) (*telemetry.PacketResponse, error) {
-	//if influxdb.SESSION == nil {
-	//	return &telemetry.PacketResponse{Success: false}, nil
-	//}
-	//
-	//r := influxdb.InsertJSON(in.Packet)
-	//return &telemetry.PacketResponse{Success: r}, nil
-	return nil, nil
+	r := redis.Insert([]byte(in.Packet))
+
+	return &telemetry.PacketResponse{Success: r}, nil
 }

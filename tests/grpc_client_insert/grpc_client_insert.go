@@ -39,7 +39,11 @@ func main() {
 	packetCh := make(chan interface{}, 1)
 	var task = func() {
 		time.Sleep(time.Millisecond * 100)
-		packet, _ := utils.GetRandomPacket()
+		packet, err := utils.GetRandomPacket()
+		if err != nil {
+			log.Error("GetRandomPacket: ", err)
+		}
+
 		packetCh <- packet
 	}
 	go task()
@@ -47,7 +51,10 @@ func main() {
 	for {
 		select {
 		case res := <-packetCh:
-			json, _ := json.Marshal(res)
+			json, err := json.Marshal(res)
+			if err != nil {
+				log.Info("json.Marshal: ", err)
+			}
 
 			for i := 0; i < 1000; i++ {
 				res, err := client.SendPacket(context.Background(), &telemetry.PacketRequest{
