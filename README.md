@@ -42,6 +42,7 @@ $ docker-compose up
 | GRPC_ENABLE                      | true                                       |
 | GRPC_PORT                        | "50051"                                    |
 | REDIS_ENABLE                     | true                                       |
+| MONGO_ENABLE                     | true                                       |
 | AMQP_ENABLE                      | true                                       |
 | AMQP_API                         | amqp://telemetry:telemetry@localhost:5672/ |
 | AMQP_NAME_QUEUE                  | go-logger-packets                          |

@@ -7,6 +7,7 @@ import (
 	"github.com/batazor/go-logger/pkg/healthcheck"
 	"github.com/batazor/go-logger/pkg/jaeger"
 	"github.com/batazor/go-logger/pkg/metrics"
+	"github.com/batazor/go-logger/pkg/mongodb"
 	"github.com/batazor/go-logger/pkg/redis"
 	"github.com/batazor/go-logger/utils"
 	"github.com/opentracing/opentracing-go"
@@ -19,6 +20,7 @@ var (
 
 	// ENV
 	REDIS_ENABLE        = utils.Getenv("REDIS_ENABLE", "true")
+	MONGO_ENABLE        = utils.Getenv("MONGO_ENABLE", "true")
 	AMQP_ENABLE         = utils.Getenv("AMQP_ENABLE", "true")
 	PROMETHEUS_ENABLE   = utils.Getenv("PROMETHEUS_ENABLE", "true")
 	GRPC_ENABLE         = utils.Getenv("GRPC_ENABLE", "true")
@@ -52,6 +54,11 @@ func main() {
 	// Run REDIS
 	if REDIS_ENABLE == "true" {
 		go redis.Listen()
+	}
+
+	// Run MONGO
+	if MONGO_ENABLE == "true" {
+		go mongodb_new.Connect()
 	}
 
 	// Run AMQP

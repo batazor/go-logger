@@ -2,6 +2,7 @@ package redis
 
 import (
 	"encoding/json"
+	"github.com/batazor/go-logger/pkg/mongodb"
 	"github.com/imdario/mergo"
 )
 
@@ -27,10 +28,17 @@ func Insert(packetNew []byte) bool {
 		return false
 	}
 
+	// Insert to Redis
 	r := client.Set(ID, data, 0)
 	if r.Err() != nil {
 		log.Error("Redis SET error: ", r.Err(), " args: ", r.Args())
 		return false
+	}
+
+	// Insert to MongoDB
+	mongodb_new.PacketCh <- mongodb_new.Document{
+		ID:   ID,
+		Item: fieldsNew,
 	}
 
 	return true
