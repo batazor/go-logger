@@ -65,6 +65,7 @@ spec:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
         imagePullPolicy: {{ .Values.deployment.image.pullPolicy | quote }}
+        enableServiceLinks: false
         {{- if .Values.args }}
         args:
 {{ toYaml .Values.args | indent 10 }}
