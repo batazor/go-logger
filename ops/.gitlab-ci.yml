@@ -31,24 +31,15 @@
   tags:
   - registry
   script:
-  - export DEPLOYS=$(helm --kube-context $HELM_CONTEXT ls | grep $CI_PROJECT_NAME | wc -l)
-  - if [ ${DEPLOYS}  -eq 0 ]; then
-      helm --kube-context $HELM_CONTEXT install
-        --name $CI_PROJECT_NAME
-        --namespace=$PROJECT_NAMESPACE
-        --set deployment.image.repository=$CI_REGISTRY_IMAGE
-        --set deployment.image.tag=$CI_COMMIT_TAG
-        --set deployment.env.AMQP_API=$AMQP_API
-        --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST
-        $HELM_PATH;
-    else
-      helm --kube-context $HELM_CONTEXT upgrade $CI_PROJECT_NAME $HELM_PATH
-        --namespace=$PROJECT_NAMESPACE
-        --set deployment.image.repository=$CI_REGISTRY_IMAGE
-        --set deployment.image.tag=$CI_COMMIT_TAG
-        --set deployment.env.AMQP_API=$AMQP_API
+  - helm --kube-context $HELM_CONTEXT upgrade $CI_PROJECT_NAME $HELM_PATH
+    --install
+    --force
+    --wait
+    --namespace=$PROJECT_NAMESPACE
+    --set deployment.image.repository=$CI_REGISTRY_IMAGE
+    --set deployment.image.tag=$CI_COMMIT_TAG
+    --set deployment.env.AMQP_API=$AMQP_API
     --set deployment.env.AMQP_EXCHANGE_LIST=$AMQP_EXCHANGE_LIST;
-    fi
   except:
   - branches
   when: on_success
