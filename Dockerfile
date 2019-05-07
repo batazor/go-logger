@@ -1,4 +1,4 @@
-FROM golang:1.9.2-alpine as builder
+FROM golang:1.12.4-alpine as builder
 
 # Build project
 WORKDIR /go/src/github.com/batazor/go-logger
