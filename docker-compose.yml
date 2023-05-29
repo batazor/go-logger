@@ -14,7 +14,7 @@ services:
     - "9411:9411"
 
   rabbitmq:
-    image: rabbitmq:3.8-management-alpine
+    image: rabbitmq:3.11-management-alpine
     environment:
       RABBITMQ_DEFAULT_USER: pb
       RABBITMQ_DEFAULT_PASS: pb
